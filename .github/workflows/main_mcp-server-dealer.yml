@@ -12,7 +12,7 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'mcp-server-dealer' # set this to the path to your web app project
-  PYTHON_VERSION: '3.13' # set this to the python version to use (supports 3.6, 3.7, 3.8)
+  PYTHON_VERSION: '3.11' # set this to the python version to use (supports 3.6, 3.7, 3.8)
 
 jobs:
   build:
@@ -29,24 +29,18 @@ jobs:
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: Create and start virtual environment
-        working-directory: mcp-server-dealer
-        run: |
-          python -m venv venv
-          source venv/bin/activate
-
       - name: Install dependencies
         working-directory: mcp-server-dealer
         run: |
           pip install uv
           uv export --no-hashes > requirements.txt
-          pip install -r requirements.txt
+          pip install --target ".python_packages/lib/site-packages" -r requirements.txt
 
       # Optional: Add step to run tests here
 
       - name: Zip artifact for deployment
         working-directory: mcp-server-dealer
-        run: zip -r ../release.zip . -x "venv/*"
+        run: zip -r ../release.zip .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
