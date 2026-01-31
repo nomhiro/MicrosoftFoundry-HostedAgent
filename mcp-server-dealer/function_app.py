@@ -11,11 +11,11 @@ from mcp_handler import mcp_app
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
-@app.route(route="mcp/{*path}", methods=["GET", "POST"])
-async def mcp_endpoint(req: func.HttpRequest) -> func.HttpResponse:
-    """MCPエンドポイント
+@app.route(route="runtime/webhooks/mcp/{*path}", methods=["GET", "POST"])
+async def mcp_webhook_endpoint(req: func.HttpRequest) -> func.HttpResponse:
+    """MCPエンドポイント（Azure Functions MCP Webhook互換）
 
-    /api/mcp/* へのリクエストをMCPハンドラーに転送
+    /runtime/webhooks/mcp/* へのリクエストをMCPハンドラーに転送
     """
     return await mcp_app.handle_request(req)
 

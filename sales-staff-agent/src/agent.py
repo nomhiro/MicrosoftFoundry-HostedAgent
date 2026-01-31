@@ -16,7 +16,7 @@ load_dotenv()
 # 環境変数から設定を取得
 PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
 MODEL_DEPLOYMENT_NAME = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:7071/api/mcp")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp")
 
 # システムプロンプト
 SYSTEM_INSTRUCTIONS = """

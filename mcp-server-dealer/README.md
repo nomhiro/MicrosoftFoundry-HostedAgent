@@ -15,9 +15,9 @@ Azure Functions 上で稼働し、Model Context Protocol (MCP) を通じて顧�
 ┌─────────────────────────────────────┐
 │   mcp-server-dealer                 │
 │   Azure Functions                   │
-│   - /api/mcp/tools/list  (GET)      │
-│   - /api/mcp/tools/call  (POST)     │
-│   - /api/health          (GET)      │
+│   - /runtime/webhooks/mcp/tools/list  (GET) │
+│   - /runtime/webhooks/mcp/tools/call  (POST)│
+│   - /health                          (GET) │
 └──────────────┬──────────────────────┘
                │
                ▼
@@ -73,8 +73,8 @@ func start
 ```
 Functions:
 
-        health_check: [GET] http://localhost:7071/api/health
-        mcp_endpoint: [GET,POST] http://localhost:7071/api/mcp/{*path}
+        health_check: [GET] http://localhost:7071/health
+        mcp_webhook_endpoint: [GET,POST] http://localhost:7071/runtime/webhooks/mcp/{*path}
 ```
 
 ## 動作確認
@@ -82,7 +82,7 @@ Functions:
 ### 1. ヘルスチェック
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/health"
+Invoke-RestMethod -Uri "http://localhost:7071/health"
 ```
 
 レスポンス:
@@ -93,7 +93,7 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/health"
 ### 2. ツール一覧の取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/list"
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/list"
 ```
 
 レスポンス:
@@ -115,7 +115,7 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/list"
 #### 顧客検索（名前から）
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_customer_by_name", "arguments": {"name": "田中"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_customer_by_name", "arguments": {"name": "田中"}}'
 ```
 
 レスポンス:
@@ -131,48 +131,48 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -
 #### 顧客詳細取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_customer_info", "arguments": {"customer_id": "C001"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_customer_info", "arguments": {"customer_id": "C001"}}'
 ```
 
 #### 契約履歴取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_contracts", "arguments": {"customer_id": "C001"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_contracts", "arguments": {"customer_id": "C001"}}'
 ```
 
 #### 来店履歴取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_visit_history", "arguments": {"customer_id": "C001"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_visit_history", "arguments": {"customer_id": "C001"}}'
 ```
 
 #### サービス予定一覧
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_upcoming_services", "arguments": {"days": 60}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_upcoming_services", "arguments": {"days": 60}}'
 ```
 
 #### 車両在庫検索
 
 ```powershell
 # SUVを検索
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_vehicles", "arguments": {"type": "SUV"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_vehicles", "arguments": {"type": "SUV"}}'
 
 # 赤色のSUVを検索（"赤" → "ソウルレッド" にもマッチ）
-Invoke-RestMethod -Uri "http://localhost:7071/api/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_vehicles", "arguments": {"type": "SUV", "color": "赤"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_vehicles", "arguments": {"type": "SUV", "color": "赤"}}'
 ```
 
 ## bash/Linux での動作確認
 
 ```bash
 # ヘルスチェック
-curl http://localhost:7071/api/health
+curl http://localhost:7071/health
 
 # ツール一覧
-curl http://localhost:7071/api/mcp/tools/list
+curl http://localhost:7071/runtime/webhooks/mcp/tools/list
 
 # 顧客検索
-curl -X POST http://localhost:7071/api/mcp/tools/call \
+curl -X POST http://localhost:7071/runtime/webhooks/mcp/tools/call \
   -H "Content-Type: application/json" \
   -d '{"name": "search_customer_by_name", "arguments": {"name": "田中"}}'
 ```
