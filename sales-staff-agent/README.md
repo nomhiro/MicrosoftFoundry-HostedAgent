@@ -75,7 +75,7 @@ AZURE_AI_PROJECT_ENDPOINT=https://your-resource.services.ai.azure.com/api/projec
 AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
 
 # MCPサーバーURL（ローカル開発時）
-MCP_SERVER_URL=http://localhost:7071/runtime/webhooks/mcp
+MCP_SERVER_URL=http://localhost:7071/runtime/webhooks/mcp/sse
 ```
 
 ## ローカル起動
@@ -177,7 +177,7 @@ docker build -t sales-staff-agent:v1 .
 docker run -p 8088:8088 \
   -e AZURE_AI_PROJECT_ENDPOINT=https://your-resource.services.ai.azure.com/api/projects/your-project \
   -e AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o \
-  -e MCP_SERVER_URL=http://host.docker.internal:7071/runtime/webhooks/mcp \
+  -e MCP_SERVER_URL=http://host.docker.internal:7071/runtime/webhooks/mcp/sse \
   sales-staff-agent:v1
 ```
 

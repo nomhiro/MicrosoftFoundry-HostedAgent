@@ -6,6 +6,7 @@ MCPサーバーを Azure Functions HTTP トリガーとして公開
 
 import azure.functions as func
 import json
+import logging
 
 from tools.customer import search_customer_by_name as _search_customer_by_name
 from tools.customer import get_customer_info as _get_customer_info
@@ -26,7 +27,14 @@ def _get_arguments(context) -> dict:
         payload = context
     else:
         payload = {}
-    return payload.get("arguments", {}) or {}
+
+    if "arguments" in payload:
+        return payload.get("arguments", {}) or {}
+
+    if "params" in payload and isinstance(payload["params"], dict):
+        return payload["params"].get("arguments", {}) or {}
+
+    return {}
 
 
 tool_properties_search_customer = json.dumps([
@@ -98,8 +106,13 @@ tool_properties_search_vehicles = json.dumps([
     toolProperties=tool_properties_search_customer,
 )
 def search_customer_by_name(context) -> list[dict]:
-    args = _get_arguments(context)
-    return _search_customer_by_name(args.get("name", ""))
+    try:
+        args = _get_arguments(context)
+        logging.info("search_customer_by_name args: %s", args)
+        return _search_customer_by_name(args.get("name", ""))
+    except Exception:
+        logging.exception("search_customer_by_name failed")
+        return [{"error": "search_customer_by_name failed"}]
 
 
 @app.generic_trigger(
@@ -110,8 +123,13 @@ def search_customer_by_name(context) -> list[dict]:
     toolProperties=tool_properties_get_customer_info,
 )
 def get_customer_info(context) -> dict:
-    args = _get_arguments(context)
-    return _get_customer_info(args.get("customer_id", ""))
+    try:
+        args = _get_arguments(context)
+        logging.info("get_customer_info args: %s", args)
+        return _get_customer_info(args.get("customer_id", ""))
+    except Exception:
+        logging.exception("get_customer_info failed")
+        return {"error": "get_customer_info failed"}
 
 
 @app.generic_trigger(
@@ -122,8 +140,13 @@ def get_customer_info(context) -> dict:
     toolProperties=tool_properties_get_contracts,
 )
 def get_contracts(context) -> list[dict]:
-    args = _get_arguments(context)
-    return _get_contracts(args.get("customer_id", ""))
+    try:
+        args = _get_arguments(context)
+        logging.info("get_contracts args: %s", args)
+        return _get_contracts(args.get("customer_id", ""))
+    except Exception:
+        logging.exception("get_contracts failed")
+        return [{"error": "get_contracts failed"}]
 
 
 @app.generic_trigger(
@@ -134,8 +157,13 @@ def get_contracts(context) -> list[dict]:
     toolProperties=tool_properties_get_visit_history,
 )
 def get_visit_history(context) -> list[dict]:
-    args = _get_arguments(context)
-    return _get_visit_history(args.get("customer_id", ""))
+    try:
+        args = _get_arguments(context)
+        logging.info("get_visit_history args: %s", args)
+        return _get_visit_history(args.get("customer_id", ""))
+    except Exception:
+        logging.exception("get_visit_history failed")
+        return [{"error": "get_visit_history failed"}]
 
 
 @app.generic_trigger(
@@ -146,9 +174,14 @@ def get_visit_history(context) -> list[dict]:
     toolProperties=tool_properties_get_upcoming_services,
 )
 def get_upcoming_services(context) -> list[dict]:
-    args = _get_arguments(context)
-    days = args.get("days", 30)
-    return _get_upcoming_services(days=days)
+    try:
+        args = _get_arguments(context)
+        logging.info("get_upcoming_services args: %s", args)
+        days = args.get("days", 30)
+        return _get_upcoming_services(days=days)
+    except Exception:
+        logging.exception("get_upcoming_services failed")
+        return [{"error": "get_upcoming_services failed"}]
 
 
 @app.generic_trigger(
@@ -159,8 +192,13 @@ def get_upcoming_services(context) -> list[dict]:
     toolProperties=tool_properties_search_vehicles,
 )
 def search_vehicles(context) -> list[dict]:
-    args = _get_arguments(context)
-    return _search_vehicles(args.get("type", ""), args.get("color"))
+    try:
+        args = _get_arguments(context)
+        logging.info("search_vehicles args: %s", args)
+        return _search_vehicles(args.get("type", ""), args.get("color"))
+    except Exception:
+        logging.exception("search_vehicles failed")
+        return [{"error": "search_vehicles failed"}]
 
 
 @app.route(route="health", methods=["GET"])

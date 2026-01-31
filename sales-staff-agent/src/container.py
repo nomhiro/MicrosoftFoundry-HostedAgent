@@ -27,7 +27,7 @@ async def create_app():
     # 環境変数から設定を取得
     project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
     model_deployment = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
-    mcp_server_url = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp")
+    mcp_server_url = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp/sse")
 
     print("Initializing Sales Staff Agent...")
     print(f"Project Endpoint: {project_endpoint}")
