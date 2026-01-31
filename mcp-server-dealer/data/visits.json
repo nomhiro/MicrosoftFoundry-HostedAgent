@@ -1,0 +1,172 @@
+[
+  {
+    "id": "VS001",
+    "customer_id": "C001",
+    "visit_date": "2025-12-15",
+    "type": "12ヶ月点検",
+    "vehicle_id": "V001",
+    "staff": "山本",
+    "notes": "オイル交換実施。CX-60への買い替え相談あり。",
+    "next_service_date": "2026-12-15"
+  },
+  {
+    "id": "VS002",
+    "customer_id": "C001",
+    "visit_date": "2024-03-20",
+    "type": "車検",
+    "vehicle_id": "V001",
+    "staff": "佐々木",
+    "notes": "ブレーキパッド交換。キャンプ用にルーフキャリア検討中。",
+    "next_service_date": "2026-03-20"
+  },
+  {
+    "id": "VS003",
+    "customer_id": "C002",
+    "visit_date": "2025-11-01",
+    "type": "修理",
+    "vehicle_id": "V002",
+    "staff": "佐々木",
+    "notes": "バンパー修理（駐車場での接触）。湘南ドライブが趣味。",
+    "next_service_date": null
+  },
+  {
+    "id": "VS004",
+    "customer_id": "C002",
+    "visit_date": "2024-12-10",
+    "type": "6ヶ月点検",
+    "vehicle_id": "V002",
+    "staff": "山本",
+    "notes": "特に問題なし。仕事の撮影機材を積むのにトランクが重宝しているとのこと。",
+    "next_service_date": "2025-06-10"
+  },
+  {
+    "id": "VS005",
+    "customer_id": "C003",
+    "visit_date": "2026-02-10",
+    "type": "車検",
+    "vehicle_id": "V003",
+    "staff": "山本",
+    "notes": "予定。ミニバンへの乗り換え相談予定。",
+    "next_service_date": null
+  },
+  {
+    "id": "VS006",
+    "customer_id": "C003",
+    "visit_date": "2025-10-20",
+    "type": "オイル交換",
+    "vehicle_id": "V003",
+    "staff": "山本",
+    "notes": "子供が成長してミニバン検討中。CX-80に興味あり。",
+    "next_service_date": null
+  },
+  {
+    "id": "VS007",
+    "customer_id": "C003",
+    "visit_date": "2024-08-10",
+    "type": "6ヶ月点検",
+    "vehicle_id": "V003",
+    "staff": "佐々木",
+    "notes": "奥様がスライドドア希望。将来的に検討。",
+    "next_service_date": "2025-02-10"
+  },
+  {
+    "id": "VS008",
+    "customer_id": "C004",
+    "visit_date": "2025-09-15",
+    "type": "車検",
+    "vehicle_id": "V004",
+    "staff": "山本",
+    "notes": "息子が免許取得。セカンドカー検討。本人はFRセダン待ち。",
+    "next_service_date": "2027-09-15"
+  },
+  {
+    "id": "VS009",
+    "customer_id": "C004",
+    "visit_date": "2025-03-20",
+    "type": "12ヶ月点検",
+    "vehicle_id": "V004",
+    "staff": "佐々木",
+    "notes": "ゴルフからテニスに転向。週末は息子とテニス。",
+    "next_service_date": "2026-03-20"
+  },
+  {
+    "id": "VS010",
+    "customer_id": "C005",
+    "visit_date": "2025-09-10",
+    "type": "12ヶ月点検",
+    "vehicle_id": "V005",
+    "staff": "佐々木",
+    "notes": "夫がSUV希望。CX-30を検討中。",
+    "next_service_date": "2026-09-10"
+  },
+  {
+    "id": "VS011",
+    "customer_id": "C005",
+    "visit_date": "2025-03-15",
+    "type": "24ヶ月点検",
+    "vehicle_id": "V005",
+    "staff": "山本",
+    "notes": "保育園送迎に軽自動車が最適と好評。",
+    "next_service_date": "2027-03-15"
+  },
+  {
+    "id": "VS012",
+    "customer_id": "C006",
+    "visit_date": "2025-11-20",
+    "type": "車検",
+    "vehicle_id": "V006",
+    "staff": "山本",
+    "notes": "5年目車検。結婚予定あり。ルーフキャリア検討中。",
+    "next_service_date": "2027-11-20"
+  },
+  {
+    "id": "VS013",
+    "customer_id": "C006",
+    "visit_date": "2025-05-10",
+    "type": "タイヤ交換",
+    "vehicle_id": "V006",
+    "staff": "佐々木",
+    "notes": "夏タイヤへ交換。千葉の海へサーフィン。",
+    "next_service_date": null
+  },
+  {
+    "id": "VS014",
+    "customer_id": "C007",
+    "visit_date": "2025-10-10",
+    "type": "オイル交換",
+    "vehicle_id": "V007",
+    "staff": "佐々木",
+    "notes": "孫2人目誕生。夫婦で車2台検討中。",
+    "next_service_date": null
+  },
+  {
+    "id": "VS015",
+    "customer_id": "C007",
+    "visit_date": "2025-04-10",
+    "type": "車検",
+    "vehicle_id": "V007",
+    "staff": "山本",
+    "notes": "3年目車検。旦那様免許返納検討中。",
+    "next_service_date": "2027-04-10"
+  },
+  {
+    "id": "VS016",
+    "customer_id": "C008",
+    "visit_date": "2024-10-15",
+    "type": "試乗",
+    "vehicle_id": null,
+    "staff": "山本",
+    "notes": "MAZDA3ファストバック 15S MT試乗。来年夏購入目標。",
+    "next_service_date": null
+  },
+  {
+    "id": "VS017",
+    "customer_id": "C008",
+    "visit_date": "2024-09-01",
+    "type": "新規来店",
+    "vehicle_id": null,
+    "staff": "山本",
+    "notes": "初来店。バイク乗りで雨の日用に車検討。MT車希望。",
+    "next_service_date": null
+  }
+]

@@ -1,0 +1,9 @@
+# azurite
+__azurite_db_*
+__blob_storage__/
+__queue_storage__/
+__blobstorage__/
+__queuestorage__/
+
+# Windows reserved names
+nul

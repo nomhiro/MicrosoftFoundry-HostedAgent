@@ -1,0 +1,360 @@
+[
+  {
+    "id": "C001",
+    "name": "田中 太郎",
+    "phone": "090-1234-5678",
+    "email": "tanaka@example.com",
+    "address": "東京都港区六本木1-2-3",
+    "registered_date": "2020-04-15",
+    "occupation": "IT企業 部長",
+    "family": {
+      "spouse": "田中 美咲（42歳）",
+      "children": ["長男 翔太（16歳・高校生）", "長女 彩花（13歳・中学生）"]
+    },
+    "hobbies": ["ゴルフ", "キャンプ", "釣り"],
+    "preferences": {
+      "favorite_colors": ["赤", "黒"],
+      "preferred_type": "SUV",
+      "budget_range": "300万〜500万円",
+      "important_features": ["安全性能", "荷室の広さ", "長距離の快適性"]
+    },
+    "current_vehicle": {
+      "model": "CX-5",
+      "year": 2023,
+      "purchase_date": "2023-03-20"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-12-15",
+        "staff": "山本",
+        "content": "点検時に雑談。長男が来年大学受験で、合格したら家族でキャンプ旅行に行きたいとのこと。CX-60への買い替えに興味あり。荷室が広い車を希望。"
+      },
+      {
+        "date": "2025-01-15",
+        "staff": "山本",
+        "content": "CX-60の契約完了。ゴルフ仲間にも紹介したいと言っていた。3月納車予定。"
+      },
+      {
+        "date": "2024-03-20",
+        "staff": "佐々木",
+        "content": "車検時に来店。最近キャンプにハマっているらしく、ルーフキャリアの取り付けを検討中。次は7人乗りも視野に入れたいとのこと。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2025-01-10",
+        "content": "CX-60 25Sプレミアムスポーツを提案。試乗で静粛性と乗り心地を気に入った様子。下取り価格に満足し即決。",
+        "result": "成約"
+      },
+      {
+        "date": "2024-10-05",
+        "content": "新型CX-60のカタログを送付。電話でAWDモデルに興味があると返答あり。",
+        "result": "検討中→成約"
+      }
+    ]
+  },
+  {
+    "id": "C002",
+    "name": "鈴木 花子",
+    "phone": "080-9876-5432",
+    "email": "suzuki@example.com",
+    "address": "神奈川県横浜市中区1-2-3",
+    "registered_date": "2021-08-20",
+    "occupation": "フリーランス デザイナー",
+    "family": {
+      "spouse": null,
+      "children": []
+    },
+    "hobbies": ["カフェ巡り", "写真撮影", "ドライブ"],
+    "preferences": {
+      "favorite_colors": ["白", "グレー"],
+      "preferred_type": "セダン",
+      "budget_range": "150万〜250万円",
+      "important_features": ["デザイン", "燃費", "取り回しの良さ"]
+    },
+    "current_vehicle": {
+      "model": "アクセラ",
+      "year": 2022,
+      "purchase_date": "2024-06-10"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-11-01",
+        "staff": "佐々木",
+        "content": "バンパー修理で来店。駐車場でぶつけてしまったとのこと。最近、湘南方面へのドライブが多いらしい。"
+      },
+      {
+        "date": "2024-06-10",
+        "staff": "山本",
+        "content": "中古のアクセラを購入。デザインが気に入ったとのこと。仕事で使う機材を積むので、セダンのトランクが使いやすいと好評。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2024-06-01",
+        "content": "MAZDA3セダンを提案したが、予算オーバーのため中古アクセラに決定。次回はMAZDA3を検討したいとのこと。",
+        "result": "成約（中古）"
+      }
+    ]
+  },
+  {
+    "id": "C003",
+    "name": "佐藤 一郎",
+    "phone": "070-1111-2222",
+    "email": "sato@example.com",
+    "address": "千葉県千葉市中央区1-2-3",
+    "registered_date": "2022-01-10",
+    "occupation": "公務員（市役所）",
+    "family": {
+      "spouse": "佐藤 恵美（38歳）",
+      "children": ["長女 ゆい（8歳・小学生）", "次女 めい（5歳・幼稚園）"]
+    },
+    "hobbies": ["DIY", "家庭菜園"],
+    "preferences": {
+      "favorite_colors": ["グレー", "シルバー"],
+      "preferred_type": "SUV",
+      "budget_range": "250万〜350万円",
+      "important_features": ["安全性能", "スライドドア", "チャイルドシート対応"]
+    },
+    "current_vehicle": {
+      "model": "CX-30",
+      "year": 2024,
+      "purchase_date": "2024-01-15"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-10-20",
+        "staff": "山本",
+        "content": "オイル交換で来店。子供が大きくなってきて、そろそろミニバンも検討したいとのこと。CX-80に興味あり。"
+      },
+      {
+        "date": "2024-08-10",
+        "staff": "佐々木",
+        "content": "6ヶ月点検で来店。奥様がスライドドア付きの車を希望していると相談あり。現状CX-30で満足しているが、将来的には検討したい。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2024-01-10",
+        "content": "CX-30とCX-5で迷ったが、取り回しの良さでCX-30に決定。奥様の運転も考慮。次回乗り換え時はCX-80も候補に。",
+        "result": "成約"
+      }
+    ]
+  },
+  {
+    "id": "C004",
+    "name": "高橋 健太",
+    "phone": "090-3333-4444",
+    "email": "takahashi@example.com",
+    "address": "東京都世田谷区等々力2-5-8",
+    "registered_date": "2019-06-20",
+    "occupation": "医師（整形外科）",
+    "family": {
+      "spouse": "高橋 由美（45歳）",
+      "children": ["長男 大輝（18歳・大学生）"]
+    },
+    "hobbies": ["テニス", "ワイン", "高級車鑑賞"],
+    "preferences": {
+      "favorite_colors": ["黒", "紺"],
+      "preferred_type": "セダン",
+      "budget_range": "500万円以上",
+      "important_features": ["高級感", "静粛性", "乗り心地"]
+    },
+    "current_vehicle": {
+      "model": "MAZDA6",
+      "year": 2021,
+      "purchase_date": "2021-09-15"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-09-15",
+        "staff": "山本",
+        "content": "車検で来店。息子が免許を取ったので、セカンドカーの購入を検討中。MAZDA2かCX-30が候補。本人はMAZDA6の後継モデルを待っている様子。"
+      },
+      {
+        "date": "2025-03-20",
+        "staff": "佐々木",
+        "content": "12ヶ月点検。ゴルフではなくテニスに転向したとのこと。週末は息子とテニスコートに通っている。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2025-09-20",
+        "content": "息子用にMAZDA2を提案。本人にはCX-60プレミアムモダンを提案したが、FRセダンを待ちたいとのこと。",
+        "result": "検討中"
+      }
+    ]
+  },
+  {
+    "id": "C005",
+    "name": "伊藤 美穂",
+    "phone": "080-5555-6666",
+    "email": "ito@example.com",
+    "address": "埼玉県さいたま市浦和区1-3-5",
+    "registered_date": "2023-03-01",
+    "occupation": "看護師",
+    "family": {
+      "spouse": "伊藤 誠（35歳・会社員）",
+      "children": ["長男 蓮（3歳）"]
+    },
+    "hobbies": ["ヨガ", "料理", "ショッピング"],
+    "preferences": {
+      "favorite_colors": ["ピンク", "白", "水色"],
+      "preferred_type": "軽自動車",
+      "budget_range": "100万〜180万円",
+      "important_features": ["燃費", "小回り", "安全性能"]
+    },
+    "current_vehicle": {
+      "model": "フレアクロスオーバー",
+      "year": 2023,
+      "purchase_date": "2023-03-15"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-09-10",
+        "staff": "佐々木",
+        "content": "12ヶ月点検で来店。夫がSUVに乗りたいと言っているらしい。CX-30を検討中とのこと。"
+      },
+      {
+        "date": "2025-03-15",
+        "staff": "山本",
+        "content": "2年目点検。子供が保育園に入り、送り迎えが日課に。軽自動車で正解だったと喜んでいた。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2025-09-15",
+        "content": "夫の誠さん用にCX-30を提案。試乗予約を入れた。週末に家族で来店予定。",
+        "result": "商談中"
+      }
+    ]
+  },
+  {
+    "id": "C006",
+    "name": "渡辺 雄介",
+    "phone": "070-7777-8888",
+    "email": "watanabe@example.com",
+    "address": "神奈川県川崎市中原区5-10-2",
+    "registered_date": "2020-11-10",
+    "occupation": "会社員（営業職）",
+    "family": {
+      "spouse": null,
+      "children": []
+    },
+    "hobbies": ["サーフィン", "スノーボード", "BBQ"],
+    "preferences": {
+      "favorite_colors": ["青", "オレンジ"],
+      "preferred_type": "SUV",
+      "budget_range": "250万〜400万円",
+      "important_features": ["4WD", "荷室の広さ", "アウトドア向け"]
+    },
+    "current_vehicle": {
+      "model": "CX-5",
+      "year": 2020,
+      "purchase_date": "2020-11-20"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-11-20",
+        "staff": "山本",
+        "content": "5年目車検で来店。サーフボードを積めるルーフキャリアを検討中。最近彼女ができて、来年あたり結婚も考えているとのこと。"
+      },
+      {
+        "date": "2025-05-10",
+        "staff": "佐々木",
+        "content": "夏タイヤ交換。今年は千葉の海によく行くらしい。CX-5の走破性に満足している様子。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2025-11-25",
+        "content": "結婚を見据えてCX-60への乗り換えを提案。2人乗りから家族利用への移行を視野に入れて検討したいとのこと。来春再度連絡予定。",
+        "result": "保留"
+      }
+    ]
+  },
+  {
+    "id": "C007",
+    "name": "山田 和子",
+    "phone": "090-9999-0000",
+    "email": "yamada@example.com",
+    "address": "東京都練馬区石神井台3-8-12",
+    "registered_date": "2018-04-01",
+    "occupation": "主婦（元・銀行員）",
+    "family": {
+      "spouse": "山田 正男（68歳・退職）",
+      "children": ["長女（結婚して独立）", "次男（結婚して独立）"]
+    },
+    "hobbies": ["ガーデニング", "旅行", "孫の世話"],
+    "preferences": {
+      "favorite_colors": ["シルバー", "パール"],
+      "preferred_type": "軽自動車",
+      "budget_range": "100万〜150万円",
+      "important_features": ["乗り降りしやすさ", "視界の良さ", "安全装備"]
+    },
+    "current_vehicle": {
+      "model": "フレア",
+      "year": 2022,
+      "purchase_date": "2022-04-10"
+    },
+    "conversation_notes": [
+      {
+        "date": "2025-10-10",
+        "staff": "佐々木",
+        "content": "オイル交換で来店。孫が2人目誕生したとのこと。娘さん家族が遊びに来ると車が足りないので、夫婦で1台ずつ持つことを検討中。"
+      },
+      {
+        "date": "2025-04-10",
+        "staff": "山本",
+        "content": "3年目点検。旦那様が運転免許の返納を検討しているとのこと。当面は奥様が運転を続ける予定。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2025-10-15",
+        "content": "旦那様用にMAZDA2を提案。高齢者向けの安全装備が充実していることをアピール。サポカー補助金の案内も実施。",
+        "result": "検討中"
+      }
+    ]
+  },
+  {
+    "id": "C008",
+    "name": "中村 翔",
+    "phone": "080-1212-3434",
+    "email": "nakamura@example.com",
+    "address": "千葉県船橋市本町4-6-1",
+    "registered_date": "2024-09-01",
+    "occupation": "会社員（エンジニア）",
+    "family": {
+      "spouse": null,
+      "children": []
+    },
+    "hobbies": ["ツーリング（バイク）", "ゲーム", "アニメ"],
+    "preferences": {
+      "favorite_colors": ["赤", "黒"],
+      "preferred_type": "セダン",
+      "budget_range": "200万〜350万円",
+      "important_features": ["走行性能", "デザイン", "マニュアル対応"]
+    },
+    "current_vehicle": null,
+    "conversation_notes": [
+      {
+        "date": "2024-09-01",
+        "staff": "山本",
+        "content": "初来店。バイクがメインだが、雨の日用に車も欲しいとのこと。MAZDA3ファストバックに興味あり。マニュアル車を希望。"
+      },
+      {
+        "date": "2024-10-15",
+        "staff": "山本",
+        "content": "試乗に来店。MAZDA3 15S MT を気に入った様子。来年のボーナスで購入を検討したいとのこと。"
+      }
+    ],
+    "sales_notes": [
+      {
+        "date": "2024-10-20",
+        "content": "MAZDA3ファストバック 15S（MT）を提案。ソウルレッドを希望。2025年夏頃の購入を目指して定期的にフォロー予定。",
+        "result": "長期検討"
+      }
+    ]
+  }
+]

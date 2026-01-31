@@ -1,0 +1,102 @@
+[
+  {
+    "id": "CT001",
+    "customer_id": "C001",
+    "vehicle_id": "V001",
+    "contract_date": "2023-03-20",
+    "type": "新車購入",
+    "amount": 3500000,
+    "status": "完了",
+    "model": "CX-5",
+    "trade_in": null
+  },
+  {
+    "id": "CT002",
+    "customer_id": "C001",
+    "vehicle_id": "V010",
+    "contract_date": "2025-01-15",
+    "type": "新車購入",
+    "amount": 4200000,
+    "status": "進行中",
+    "model": "CX-60",
+    "trade_in": {
+      "model": "CX-5",
+      "year": 2023,
+      "price": 2800000
+    }
+  },
+  {
+    "id": "CT003",
+    "customer_id": "C002",
+    "vehicle_id": "V002",
+    "contract_date": "2024-06-10",
+    "type": "中古購入",
+    "amount": 1800000,
+    "status": "完了",
+    "model": "アクセラ",
+    "trade_in": null
+  },
+  {
+    "id": "CT004",
+    "customer_id": "C003",
+    "vehicle_id": "V003",
+    "contract_date": "2024-01-15",
+    "type": "新車購入",
+    "amount": 2800000,
+    "status": "完了",
+    "model": "CX-30",
+    "trade_in": null
+  },
+  {
+    "id": "CT005",
+    "customer_id": "C004",
+    "vehicle_id": "V004",
+    "contract_date": "2021-09-15",
+    "type": "新車購入",
+    "amount": 4500000,
+    "status": "完了",
+    "model": "MAZDA6",
+    "trade_in": {
+      "model": "アテンザ",
+      "year": 2017,
+      "price": 1200000
+    }
+  },
+  {
+    "id": "CT006",
+    "customer_id": "C005",
+    "vehicle_id": "V005",
+    "contract_date": "2023-03-15",
+    "type": "新車購入",
+    "amount": 1650000,
+    "status": "完了",
+    "model": "フレアクロスオーバー",
+    "trade_in": null
+  },
+  {
+    "id": "CT007",
+    "customer_id": "C006",
+    "vehicle_id": "V006",
+    "contract_date": "2020-11-20",
+    "type": "新車購入",
+    "amount": 3200000,
+    "status": "完了",
+    "model": "CX-5",
+    "trade_in": null
+  },
+  {
+    "id": "CT008",
+    "customer_id": "C007",
+    "vehicle_id": "V007",
+    "contract_date": "2022-04-10",
+    "type": "新車購入",
+    "amount": 1350000,
+    "status": "完了",
+    "model": "フレア",
+    "trade_in": {
+      "model": "デミオ",
+      "year": 2015,
+      "price": 300000
+    }
+  }
+]

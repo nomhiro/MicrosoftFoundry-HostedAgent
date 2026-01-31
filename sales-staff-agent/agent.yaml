@@ -1,0 +1,43 @@
+# 販売店スタッフエージェント設定
+# Azure Developer CLI (azd) で使用
+
+name: sales-staff-agent
+version: 1.0.0
+description: 自動車販売店スタッフ支援エージェント
+
+# フレームワーク設定
+framework: agentframework
+entrypoint: src/container.py
+
+# モデル設定
+model:
+  deployment_name: gpt-4o
+
+# MCP ツール設定
+tools:
+  - type: mcp
+    server_label: dealer-backend
+    # Foundry デプロイ時は project_connection_id を使用
+    # project_connection_id: mcp-dealer-connection
+    # ローカル開発時は server_url を使用
+    server_url: http://localhost:7071/api/mcp
+    allowed_tools:
+      - search_customer_by_name
+      - get_customer_info
+      - get_contracts
+      - get_visit_history
+      - search_vehicles
+      - get_upcoming_services
+
+# リソース設定
+resources:
+  cpu: "1"
+  memory: "2Gi"
+  min_replicas: 1
+  max_replicas: 3
+
+# 環境変数
+environment:
+  AZURE_AI_PROJECT_ENDPOINT: ${AZURE_AI_PROJECT_ENDPOINT}
+  AZURE_AI_MODEL_DEPLOYMENT_NAME: ${AZURE_AI_MODEL_DEPLOYMENT_NAME}
+  MCP_SERVER_URL: ${MCP_SERVER_URL}
