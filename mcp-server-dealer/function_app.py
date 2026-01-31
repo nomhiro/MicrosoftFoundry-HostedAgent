@@ -40,60 +40,60 @@ def _get_arguments(context) -> dict:
 tool_properties_search_customer = json.dumps([
     {
         "name": "name",
-        "propertyType": "string",
+        "type": "string",
         "description": "顧客名（例: '田中'）",
-        "isRequired": True
+        "required": True
     }
 ])
 
 tool_properties_get_customer_info = json.dumps([
     {
         "name": "customer_id",
-        "propertyType": "string",
+        "type": "string",
         "description": "顧客ID（例: 'C001'）",
-        "isRequired": True
+        "required": True
     }
 ])
 
 tool_properties_get_contracts = json.dumps([
     {
         "name": "customer_id",
-        "propertyType": "string",
+        "type": "string",
         "description": "顧客ID（例: 'C001'）",
-        "isRequired": True
+        "required": True
     }
 ])
 
 tool_properties_get_visit_history = json.dumps([
     {
         "name": "customer_id",
-        "propertyType": "string",
+        "type": "string",
         "description": "顧客ID（例: 'C001'）",
-        "isRequired": True
+        "required": True
     }
 ])
 
 tool_properties_get_upcoming_services = json.dumps([
     {
         "name": "days",
-        "propertyType": "integer",
+        "type": "integer",
         "description": "何日先まで検索するか（デフォルト: 30）",
-        "isRequired": False
+        "required": False
     }
 ])
 
 tool_properties_search_vehicles = json.dumps([
     {
         "name": "type",
-        "propertyType": "string",
+        "type": "string",
         "description": "車種（'SUV', 'セダン', '軽自動車', 'ミニバン'）",
-        "isRequired": True
+        "required": True
     },
     {
         "name": "color",
-        "propertyType": "string",
+        "type": "string",
         "description": "色（部分一致、例: '赤' → 'ソウルレッド' にマッチ）",
-        "isRequired": False
+        "required": False
     }
 ])
 
