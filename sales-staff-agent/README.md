@@ -150,14 +150,57 @@ curl -X POST http://localhost:8088/responses \
   }'
 ```
 
-### 3. 動作確認シナリオ
+### 3. 動作確認シナリオ（顧客ID特定 → 詳細取得）
+
+顧客名だけでは一意に特定できない場合があるため、以下の2ステップで確認します。
+
+1) 顧客候補とIDの取得
+
+```powershell
+$body = @{
+  input = @{
+    messages = @(
+      @{ role = "user"; content = "田中で検索して候補とIDを教えて" }
+    )
+  }
+} | ConvertTo-Json -Depth 4
+
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+```
+
+2) 取得したIDで契約履歴と顧客情報を取得
+
+```powershell
+$body = @{
+  input = @{
+    messages = @(
+      @{ role = "user"; content = "C001の契約履歴を教えて" }
+    )
+  }
+} | ConvertTo-Json -Depth 4
+
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+```
+
+```powershell
+$body = @{
+  input = @{
+    messages = @(
+      @{ role = "user"; content = "C001の顧客情報を教えて" }
+    )
+  }
+} | ConvertTo-Json -Depth 4
+
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+```
 
 以下の問い合わせが正常に応答されることを確認してください：
 
 | シナリオ | 問い合わせ例 | 期待される動作 |
 |---------|-------------|---------------|
-| 顧客検索 | 「田中様の情報を教えて」 | 田中太郎の顧客情報を返す |
+| 顧客検索 | 「田中で検索して候補とIDを教えて」 | 田中太郎などの候補と顧客IDを返す |
 | 契約履歴 | 「C001の契約履歴」 | CX-5の新車購入契約を返す |
+| 顧客情報 | 「C001の顧客情報」 | 顧客の詳細情報を返す |
 | 来店履歴 | 「鈴木様の来店履歴」 | 鈴木花子の点検履歴を返す |
 | 車両検索 | 「赤いSUVの在庫」 | ソウルレッドのCX-5を返す |
 | サービス予定 | 「今後30日のサービス予定」 | 予定されている点検・車検を返す |

@@ -5,11 +5,12 @@ MCPサーバーツールモジュール
 """
 
 import json
+import logging
 from pathlib import Path
 from typing import Any
 
 # データディレクトリのパス
-DATA_DIR = Path(__file__).parent.parent / "data"
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
 
 
 def load_json(filename: str) -> list[dict[str, Any]]:
@@ -22,8 +23,17 @@ def load_json(filename: str) -> list[dict[str, Any]]:
         JSONデータのリスト
     """
     file_path = DATA_DIR / filename
-    with open(file_path, "r", encoding="utf-8") as f:
-        return json.load(f)
+    try:
+        if not file_path.exists():
+            logging.error("Data file not found: %s", file_path)
+            return []
+        with open(file_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        logging.info("Loaded data file: %s (count=%d)", file_path, len(data))
+        return data
+    except Exception:
+        logging.exception("Failed to load data file: %s", file_path)
+        return []
 
 
 def get_customers() -> list[dict[str, Any]]:
