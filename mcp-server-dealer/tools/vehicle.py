@@ -6,7 +6,6 @@
 
 from typing import Optional
 from tools import get_vehicles
-from mcp_handler import mcp_app
 
 # 色のマッピング（部分一致検索用）
 COLOR_ALIASES = {
@@ -47,25 +46,6 @@ def matches_color(vehicle_color: str, search_color: Optional[str]) -> bool:
     return search_color in vehicle_color
 
 
-@mcp_app.register(
-    name="search_vehicles",
-    description="条件に合う車両在庫を検索します（色は部分一致対応）",
-    parameters={
-        "type": "object",
-        "properties": {
-            "type": {
-                "type": "string",
-                "description": "車種（'SUV', 'セダン', '軽自動車', 'ミニバン'）",
-                "enum": ["SUV", "セダン", "軽自動車", "ミニバン"]
-            },
-            "color": {
-                "type": "string",
-                "description": "色（部分一致、例: '赤' → 'ソウルレッド' にマッチ）"
-            }
-        },
-        "required": ["type"]
-    }
-)
 def search_vehicles(type: str, color: Optional[str] = None) -> list[dict]:
     """条件に合う車両在庫を検索します
 

@@ -13,6 +13,18 @@
     "version": "[4.*, 5.0.0)"
   },
   "extensions": {
+    "mcp": {
+      "instructions": "自動車販売店向け基幹システム MCP サーバーです。顧客情報・契約履歴・来店履歴・車両在庫・サービス予定の取得に対応しています。",
+      "serverName": "mcp-server-dealer",
+      "serverVersion": "1.0.0",
+      "encryptClientState": true,
+      "messageOptions": {
+        "useAbsoluteUriForEndpoint": false
+      },
+      "system": {
+        "webhookAuthorizationLevel": "Anonymous"
+      }
+    },
     "http": {
       "routePrefix": ""
     }

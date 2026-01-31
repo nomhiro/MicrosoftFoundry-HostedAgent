@@ -15,9 +15,8 @@ Azure Functions 上で稼働し、Model Context Protocol (MCP) を通じて顧�
 ┌─────────────────────────────────────┐
 │   mcp-server-dealer                 │
 │   Azure Functions                   │
-│   - /runtime/webhooks/mcp/tools/list  (GET) │
-│   - /runtime/webhooks/mcp/tools/call  (POST)│
-│   - /health                          (GET) │
+│   - /runtime/webhooks/mcp  (MCP endpoint) │
+│   - /health                 (GET)         │
 └──────────────┬──────────────────────┘
                │
                ▼
@@ -74,7 +73,7 @@ func start
 Functions:
 
         health_check: [GET] http://localhost:7071/health
-        mcp_webhook_endpoint: [GET,POST] http://localhost:7071/runtime/webhooks/mcp/{*path}
+        mcp_tool_*:   [MCP] http://localhost:7071/runtime/webhooks/mcp
 ```
 
 ## 動作確認
@@ -90,32 +89,18 @@ Invoke-RestMethod -Uri "http://localhost:7071/health"
 {"status": "healthy", "service": "mcp-server-dealer"}
 ```
 
-### 2. ツール一覧の取得
+### 2. MCP ツール一覧の取得（JSON-RPC）
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/list"
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
 ```
 
-レスポンス:
-```json
-{
-  "tools": [
-    {
-      "name": "search_customer_by_name",
-      "description": "顧客名からIDを検索します（部分一致）",
-      "inputSchema": {...}
-    },
-    ...
-  ]
-}
-```
-
-### 3. ツール呼び出し例
+### 3. ツール呼び出し例（JSON-RPC）
 
 #### 顧客検索（名前から）
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_customer_by_name", "arguments": {"name": "田中"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
 ```
 
 レスポンス:
@@ -131,35 +116,35 @@ Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -
 #### 顧客詳細取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_customer_info", "arguments": {"customer_id": "C001"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"3","method":"tools/call","params":{"name":"get_customer_info","arguments":{"customer_id":"C001"}}}'
 ```
 
 #### 契約履歴取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_contracts", "arguments": {"customer_id": "C001"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"4","method":"tools/call","params":{"name":"get_contracts","arguments":{"customer_id":"C001"}}}'
 ```
 
 #### 来店履歴取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_visit_history", "arguments": {"customer_id": "C001"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"5","method":"tools/call","params":{"name":"get_visit_history","arguments":{"customer_id":"C001"}}}'
 ```
 
 #### サービス予定一覧
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "get_upcoming_services", "arguments": {"days": 60}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"6","method":"tools/call","params":{"name":"get_upcoming_services","arguments":{"days":60}}}'
 ```
 
 #### 車両在庫検索
 
 ```powershell
 # SUVを検索
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_vehicles", "arguments": {"type": "SUV"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"7","method":"tools/call","params":{"name":"search_vehicles","arguments":{"type":"SUV"}}}'
 
 # 赤色のSUVを検索（"赤" → "ソウルレッド" にもマッチ）
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -Method POST -ContentType "application/json" -Body '{"name": "search_vehicles", "arguments": {"type": "SUV", "color": "赤"}}'
+Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"8","method":"tools/call","params":{"name":"search_vehicles","arguments":{"type":"SUV","color":"赤"}}}'
 ```
 
 ## bash/Linux での動作確認
@@ -169,12 +154,14 @@ Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp/tools/call" -
 curl http://localhost:7071/health
 
 # ツール一覧
-curl http://localhost:7071/runtime/webhooks/mcp/tools/list
+curl -X POST http://localhost:7071/runtime/webhooks/mcp \
+  -H "Content-Type: application/json" \
+  -d '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
 
 # 顧客検索
-curl -X POST http://localhost:7071/runtime/webhooks/mcp/tools/call \
+curl -X POST http://localhost:7071/runtime/webhooks/mcp \
   -H "Content-Type: application/json" \
-  -d '{"name": "search_customer_by_name", "arguments": {"name": "田中"}}'
+  -d '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
 ```
 
 ## データ構造

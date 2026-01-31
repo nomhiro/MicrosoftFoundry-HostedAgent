@@ -6,23 +6,6 @@
 
 from datetime import datetime, timedelta
 from tools import get_visits, get_customers
-from mcp_handler import mcp_app
-
-
-@mcp_app.register(
-    name="get_visit_history",
-    description="顧客IDから来店履歴を取得します",
-    parameters={
-        "type": "object",
-        "properties": {
-            "customer_id": {
-                "type": "string",
-                "description": "顧客ID（例: 'C001'）"
-            }
-        },
-        "required": ["customer_id"]
-    }
-)
 def get_visit_history(customer_id: str) -> list[dict]:
     """顧客IDから来店履歴を取得します
 
@@ -57,21 +40,6 @@ def get_visit_history(customer_id: str) -> list[dict]:
     return results
 
 
-@mcp_app.register(
-    name="get_upcoming_services",
-    description="今後のサービス予定一覧を取得します",
-    parameters={
-        "type": "object",
-        "properties": {
-            "days": {
-                "type": "integer",
-                "description": "何日先まで検索するか（デフォルト: 30）",
-                "default": 30
-            }
-        },
-        "required": []
-    }
-)
 def get_upcoming_services(days: int = 30) -> list[dict]:
     """今後のサービス予定一覧を取得します
 

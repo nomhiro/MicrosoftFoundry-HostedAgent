@@ -5,23 +5,6 @@
 """
 
 from tools import get_contracts as _get_contracts
-from mcp_handler import mcp_app
-
-
-@mcp_app.register(
-    name="get_contracts",
-    description="顧客IDから契約履歴を取得します",
-    parameters={
-        "type": "object",
-        "properties": {
-            "customer_id": {
-                "type": "string",
-                "description": "顧客ID（例: 'C001'）"
-            }
-        },
-        "required": ["customer_id"]
-    }
-)
 def get_contracts(customer_id: str) -> list[dict]:
     """顧客IDから契約履歴を取得します
 
