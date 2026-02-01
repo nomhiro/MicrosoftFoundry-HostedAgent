@@ -44,6 +44,13 @@ except ImportError:  # Fallback for local environments without MCP helpers
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 
+def _log_json(message: str, payload: dict) -> None:
+    try:
+        logging.info("%s %s", message, json.dumps(payload, ensure_ascii=False, default=str))
+    except Exception:
+        logging.info("%s %s", message, payload)
+
+
 def _get_arguments(context) -> dict:
     """MCP Tool Trigger の入力から arguments を取得"""
     if isinstance(context, str):
@@ -76,7 +83,7 @@ tool_properties_search_customer = json.dumps([
         property_type="string",
         is_required=True,
     ).to_dict()
-])
+], ensure_ascii=False)
 
 tool_properties_get_customer_info = json.dumps([
     McpToolProperty(
@@ -85,7 +92,7 @@ tool_properties_get_customer_info = json.dumps([
         property_type="string",
         is_required=True,
     ).to_dict()
-])
+], ensure_ascii=False)
 
 tool_properties_get_contracts = json.dumps([
     McpToolProperty(
@@ -94,7 +101,7 @@ tool_properties_get_contracts = json.dumps([
         property_type="string",
         is_required=True,
     ).to_dict()
-])
+], ensure_ascii=False)
 
 tool_properties_get_visit_history = json.dumps([
     McpToolProperty(
@@ -103,7 +110,7 @@ tool_properties_get_visit_history = json.dumps([
         property_type="string",
         is_required=True,
     ).to_dict()
-])
+], ensure_ascii=False)
 
 tool_properties_get_upcoming_services = json.dumps([
     McpToolProperty(
@@ -113,7 +120,7 @@ tool_properties_get_upcoming_services = json.dumps([
         is_required=False,
         default=30,
     ).to_dict()
-])
+], ensure_ascii=False)
 
 tool_properties_search_vehicles = json.dumps([
     McpToolProperty(
@@ -129,7 +136,7 @@ tool_properties_search_vehicles = json.dumps([
         property_type="string",
         is_required=False,
     ).to_dict(),
-])
+], ensure_ascii=False)
 
 
 @app.generic_trigger(
@@ -142,7 +149,7 @@ tool_properties_search_vehicles = json.dumps([
 def search_customer_by_name(context) -> list[dict]:
     try:
         args = _get_arguments(context)
-        logging.info("search_customer_by_name args: %s", args)
+        _log_json("search_customer_by_name args:", args)
         return _search_customer_by_name(args.get("name", ""))
     except Exception:
         logging.exception("search_customer_by_name failed")
@@ -159,7 +166,7 @@ def search_customer_by_name(context) -> list[dict]:
 def get_customer_info(context) -> dict:
     try:
         args = _get_arguments(context)
-        logging.info("get_customer_info args: %s", args)
+        _log_json("get_customer_info args:", args)
         return _get_customer_info(args.get("customer_id", ""))
     except Exception:
         logging.exception("get_customer_info failed")
@@ -176,7 +183,7 @@ def get_customer_info(context) -> dict:
 def get_contracts(context) -> list[dict]:
     try:
         args = _get_arguments(context)
-        logging.info("get_contracts args: %s", args)
+        _log_json("get_contracts args:", args)
         return _get_contracts(args.get("customer_id", ""))
     except Exception:
         logging.exception("get_contracts failed")
@@ -193,7 +200,7 @@ def get_contracts(context) -> list[dict]:
 def get_visit_history(context) -> list[dict]:
     try:
         args = _get_arguments(context)
-        logging.info("get_visit_history args: %s", args)
+        _log_json("get_visit_history args:", args)
         return _get_visit_history(args.get("customer_id", ""))
     except Exception:
         logging.exception("get_visit_history failed")
@@ -210,7 +217,7 @@ def get_visit_history(context) -> list[dict]:
 def get_upcoming_services(context) -> list[dict]:
     try:
         args = _get_arguments(context)
-        logging.info("get_upcoming_services args: %s", args)
+        _log_json("get_upcoming_services args:", args)
         days = args.get("days", 30)
         return _get_upcoming_services(days=days)
     except Exception:
@@ -228,7 +235,7 @@ def get_upcoming_services(context) -> list[dict]:
 def search_vehicles(context) -> list[dict]:
     try:
         args = _get_arguments(context)
-        logging.info("search_vehicles args: %s", args)
+        _log_json("search_vehicles args:", args)
         return _search_vehicles(args.get("type", ""), args.get("color"))
     except Exception:
         logging.exception("search_vehicles failed")
