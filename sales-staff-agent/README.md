@@ -133,7 +133,8 @@ $body = @{
     }
 } | ConvertTo-Json -Depth 4
 
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
+  Select-Object -ExpandProperty output
 ```
 
 #### bash/curl
@@ -160,12 +161,13 @@ curl -X POST http://localhost:8088/responses \
 $body = @{
   input = @{
     messages = @(
-      @{ role = "user"; content = "田中で検索して候補とIDを教えて" }
+      @{ role = "user"; content = "田中 太郎の顧客情報を教えて" }
     )
   }
 } | ConvertTo-Json -Depth 4
 
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
+  Select-Object -ExpandProperty output
 ```
 
 2) 取得したIDで契約履歴と顧客情報を取得
@@ -179,7 +181,8 @@ $body = @{
   }
 } | ConvertTo-Json -Depth 4
 
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
+  Select-Object -ExpandProperty output
 ```
 
 ```powershell
@@ -191,7 +194,8 @@ $body = @{
   }
 } | ConvertTo-Json -Depth 4
 
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
+  Select-Object -ExpandProperty output
 ```
 
 以下の問い合わせが正常に応答されることを確認してください：

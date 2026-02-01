@@ -2,11 +2,13 @@
   "version": "2.0",
   "logging": {
     "logLevel": {
-      "Default": "Information",
+      "Default": "Warning",
       "Function": "Information",
+      "Host": "Warning",
       "Host.Results": "Warning",
       "Host.Aggregator": "Warning",
       "Host.Triggers": "Warning",
+      "Worker": "Warning",
       "Microsoft": "Warning",
       "System": "Warning",
       "Microsoft.Azure.Functions.Worker.Extensions.Mcp": "Warning",
