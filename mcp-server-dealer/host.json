@@ -18,6 +18,12 @@
       "samplingSettings": {
         "isEnabled": true,
         "excludedTypes": "Request"
+      },
+      "logLevel": {
+        "default": "Warning",
+        "Function": "Information",
+        "Microsoft.Azure.Functions.Worker.Extensions.Mcp": "Warning",
+        "Mcp": "Warning"
       }
     }
   },
