@@ -7,9 +7,18 @@ Azure Foundry API 経由でエージェントを呼び出す
 
 import os
 import json
+import logging
 from functools import partial
 from aiohttp import web
 from dotenv import load_dotenv
+
+# ロギング設定
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 # JSONレスポンス用（ensure_ascii=Falseで日本語やクォートをエスケープしない）
 json_dumps = partial(json.dumps, ensure_ascii=False)
@@ -89,6 +98,15 @@ async def create_app():
         """ヘルスチェック"""
         return web.json_response({"status": "healthy", "agent": agent.name}, dumps=json_dumps)
 
+    def _log_args(args_data):
+        """引数をログ出力用にフォーマット"""
+        if isinstance(args_data, str):
+            try:
+                return json.dumps(json.loads(args_data), ensure_ascii=False)
+            except Exception:
+                return args_data
+        return json.dumps(args_data, ensure_ascii=False) if args_data else "{}"
+
     async def responses_handler(request):
         """メッセージ処理エンドポイント"""
         try:
@@ -107,20 +125,75 @@ async def create_app():
             else:
                 messages = [{"role": "user", "content": str(input_data)}]
 
-            # エージェントを呼び出し
-            response = openai_client.responses.create(
+            # リクエストログ
+            logger.info("=" * 50)
+            logger.info("リクエスト受信")
+            for msg in messages:
+                logger.info(f"  [{msg.get('role', 'unknown')}] {msg.get('content', '')}")
+
+            # エージェントを呼び出し（ストリーミングモード）
+            logger.info("-" * 50)
+            logger.info("LLM呼び出し開始")
+
+            stream_response = openai_client.responses.create(
+                stream=True,
                 input=messages,
                 extra_body={"agent": AgentReference(name=agent.name, version=str(agent.version)).as_dict()}
             )
 
+            # ストリーミングイベントを処理
+            response_id = None
+            output_text = ""
+
+            for event in stream_response:
+                event_type = event.type
+
+                if event_type == "response.created":
+                    response_id = event.response.id
+                    logger.info(f"  レスポンスID: {response_id}")
+
+                elif event_type == "response.output_item.done":
+                    item = event.item
+                    item_type = getattr(item, 'type', None)
+
+                    # MCPツール呼び出しのログ
+                    if item_type == "mcp_tool_call":
+                        tool_name = getattr(item, 'name', 'unknown')
+                        tool_args = getattr(item, 'arguments', None)
+                        logger.info("-" * 50)
+                        logger.info(f"ツール呼び出し: {tool_name}")
+                        logger.info(f"  引数: {_log_args(tool_args)}")
+
+                    # MCPツール呼び出し結果のログ
+                    elif item_type == "mcp_tool_call_output":
+                        output = getattr(item, 'output', None)
+                        logger.info(f"  結果: {_log_args(output)}")
+
+                    # メッセージ（LLM応答）のログ
+                    elif item_type == "message":
+                        content_list = getattr(item, 'content', [])
+                        for content in content_list:
+                            if getattr(content, 'type', None) == "output_text":
+                                output_text = getattr(content, 'text', '')
+
+                elif event_type == "response.completed":
+                    final_response = event.response
+                    response_id = final_response.id
+                    output_text = getattr(final_response, 'output_text', output_text)
+                    logger.info("-" * 50)
+                    logger.info("レスポンス完了")
+                    logger.info(f"  出力: {output_text[:200]}..." if len(output_text) > 200 else f"  出力: {output_text}")
+                    logger.info("=" * 50)
+
             # レスポンスを返す
             return web.json_response({
-                "id": response.id,
-                "output": response.output_text,
+                "id": response_id,
+                "output": output_text,
                 "status": "completed"
             }, dumps=json_dumps)
 
         except Exception as e:
+            logger.error(f"エラー発生: {e}")
             return web.json_response(
                 {"error": str(e), "status": "failed"},
                 status=500,

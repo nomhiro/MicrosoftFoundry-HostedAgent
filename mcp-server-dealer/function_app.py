@@ -150,7 +150,9 @@ def search_customer_by_name(context) -> list[dict]:
     try:
         args = _get_arguments(context)
         _log_json("search_customer_by_name args:", args)
-        return _search_customer_by_name(args.get("name", ""))
+        result = _search_customer_by_name(args.get("name", ""))
+        _log_json("search_customer_by_name result:", result)
+        return result
     except Exception:
         logging.exception("search_customer_by_name failed")
         return [{"error": "search_customer_by_name failed"}]
@@ -167,7 +169,9 @@ def get_customer_info(context) -> dict:
     try:
         args = _get_arguments(context)
         _log_json("get_customer_info args:", args)
-        return _get_customer_info(args.get("customer_id", ""))
+        result = _get_customer_info(args.get("customer_id", ""))
+        _log_json("get_customer_info result:", result)
+        return result
     except Exception:
         logging.exception("get_customer_info failed")
         return {"error": "get_customer_info failed"}
@@ -184,7 +188,9 @@ def get_contracts(context) -> list[dict]:
     try:
         args = _get_arguments(context)
         _log_json("get_contracts args:", args)
-        return _get_contracts(args.get("customer_id", ""))
+        result = _get_contracts(args.get("customer_id", ""))
+        _log_json("get_contracts result:", result)
+        return result
     except Exception:
         logging.exception("get_contracts failed")
         return [{"error": "get_contracts failed"}]
@@ -201,7 +207,9 @@ def get_visit_history(context) -> list[dict]:
     try:
         args = _get_arguments(context)
         _log_json("get_visit_history args:", args)
-        return _get_visit_history(args.get("customer_id", ""))
+        result = _get_visit_history(args.get("customer_id", ""))
+        _log_json("get_visit_history result:", result)
+        return result
     except Exception:
         logging.exception("get_visit_history failed")
         return [{"error": "get_visit_history failed"}]
@@ -219,7 +227,9 @@ def get_upcoming_services(context) -> list[dict]:
         args = _get_arguments(context)
         _log_json("get_upcoming_services args:", args)
         days = args.get("days", 30)
-        return _get_upcoming_services(days=days)
+        result = _get_upcoming_services(days=days)
+        _log_json("get_upcoming_services result:", result)
+        return result
     except Exception:
         logging.exception("get_upcoming_services failed")
         return [{"error": "get_upcoming_services failed"}]
@@ -236,7 +246,9 @@ def search_vehicles(context) -> list[dict]:
     try:
         args = _get_arguments(context)
         _log_json("search_vehicles args:", args)
-        return _search_vehicles(args.get("type", ""), args.get("color"))
+        result = _search_vehicles(args.get("type", ""), args.get("color"))
+        _log_json("search_vehicles result:", result)
+        return result
     except Exception:
         logging.exception("search_vehicles failed")
         return [{"error": "search_vehicles failed"}]
