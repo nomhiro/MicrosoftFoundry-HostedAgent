@@ -5,7 +5,7 @@
 """
 
 from typing import Optional
-from tools import get_customers
+from tools import get_customers, normalize_customer_id
 def search_customer_by_name(name: str) -> list[dict]:
     """顧客名からIDを検索します（部分一致）
 
@@ -41,9 +41,10 @@ def get_customer_info(customer_id: str) -> dict:
         該当なしの場合は {"error": "Customer not found"}
     """
     customers = get_customers()
+    normalized_id = normalize_customer_id(customer_id)
 
     for customer in customers:
-        if customer["id"] == customer_id:
+        if customer["id"] == normalized_id:
             return customer
 
     return {"error": "Customer not found"}

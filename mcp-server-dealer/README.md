@@ -2,7 +2,8 @@
 
 自動車販売店向け基幹システム MCPサーバー
 
-Azure Functions 上で稼働し、Model Context Protocol (MCP) を通じて顧客情報・契約履歴・来店履歴・車両在庫などのデータを提供します。
+Azure Functions 上で稼働し、Model Context Protocol (MCP) を通じて顧客情報・契約履歴・来店履歴・車両在庫・今後のサービス予定などのデータを提供します。
+MCPクライアント（AIエージェント）からのツール呼び出しに応じて JSON データ（data/*.json）を参照し、検索結果を返します。
 
 ## 概要
 
@@ -28,14 +29,21 @@ Azure Functions 上で稼働し、Model Context Protocol (MCP) を通じて顧�
 
 ## 機能（MCPツール）
 
-| ツール名 | 説明 | 必須パラメータ |
-|---------|------|---------------|
-| `search_customer_by_name` | 顧客名からID検索（部分一致） | `name` |
-| `get_customer_info` | 顧客IDから詳細情報を取得 | `customer_id` |
-| `get_contracts` | 顧客IDから契約履歴を取得 | `customer_id` |
-| `get_visit_history` | 顧客IDから来店履歴を取得 | `customer_id` |
-| `get_upcoming_services` | 今後のサービス予定一覧 | `days`（任意、デフォルト30） |
-| `search_vehicles` | 車両在庫検索（色は部分一致対応） | `type`（必須）、`color`（任意） |
+| ツール名 | 目的 | 入力パラメータ |
+|---------|------|----------------|
+| `search_customer_by_name` | 顧客名からID候補を検索（部分一致） | `name`（必須）: 検索したい氏名/姓/名。例: `田中` / `田中 太郎` |
+| `get_customer_info` | 顧客IDから詳細情報を取得 | `customer_id`（必須）: 例 `C001`。文字列内にIDが含まれていても抽出して照合します（例: `C001の顧客情報`） |
+| `get_contracts` | 顧客IDから契約履歴を取得 | `customer_id`（必須）: 例 `C001`。文字列内のIDも自動抽出して照合します |
+| `get_visit_history` | 顧客IDから来店履歴を取得 | `customer_id`（必須）: 例 `C001`。文字列内のIDも自動抽出して照合します |
+| `get_upcoming_services` | 今後のサービス予定一覧 | `days`（任意）: 何日先まで検索するか。省略時は30日 |
+| `search_vehicles` | 車両在庫検索（色は部分一致） | `type`（必須）: `SUV` / `セダン` / `軽自動車` / `ミニバン`、`color`（任意）: `赤` など（部分一致） |
+
+### パラメータ補足
+
+- `customer_id` は `C` + 数字の形式を想定しています（例: `C001`）。
+  文章内に含まれていても自動抽出して照合します。
+- `name` は部分一致検索です。姓のみ/名のみ/フルネームいずれも可です。
+- `color` は部分一致です（例: `赤` → `ソウルレッド` にマッチ）。
 
 ## 必要な環境
 

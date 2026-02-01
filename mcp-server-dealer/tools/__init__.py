@@ -6,6 +6,7 @@ MCPサーバーツールモジュール
 
 import json
 import logging
+import re
 from pathlib import Path
 from typing import Any
 
@@ -54,3 +55,14 @@ def get_visits() -> list[dict[str, Any]]:
 def get_vehicles() -> list[dict[str, Any]]:
     """車両データを取得"""
     return load_json("vehicles.json")
+
+
+def normalize_customer_id(value: str) -> str:
+    """顧客IDを正規化（例: 'C001の顧客情報' -> 'C001'）"""
+    if not value:
+        return ""
+    text = str(value).replace("\u3000", " ").strip()
+    match = re.search(r"C\d{3,}", text, re.IGNORECASE)
+    if match:
+        return match.group(0).upper()
+    return text

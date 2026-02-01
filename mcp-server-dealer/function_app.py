@@ -79,7 +79,7 @@ def _get_arguments(context) -> dict:
 tool_properties_search_customer = json.dumps([
     McpToolProperty(
         name="name",
-        description="顧客名（例: '田中'）",
+        description="顧客名（部分一致）。姓のみ/名のみ/フルネーム可（例: '田中', '田中 太郎'）",
         property_type="string",
         is_required=True,
     ).to_dict()
@@ -88,7 +88,7 @@ tool_properties_search_customer = json.dumps([
 tool_properties_get_customer_info = json.dumps([
     McpToolProperty(
         name="customer_id",
-        description="顧客ID（例: 'C001'）",
+        description="顧客ID（例: 'C001'）。文字列内にIDが含まれていても抽出して照合します（例: 'C001の顧客情報'）",
         property_type="string",
         is_required=True,
     ).to_dict()
@@ -97,7 +97,7 @@ tool_properties_get_customer_info = json.dumps([
 tool_properties_get_contracts = json.dumps([
     McpToolProperty(
         name="customer_id",
-        description="顧客ID（例: 'C001'）",
+        description="顧客ID（例: 'C001'）。文字列内にIDが含まれていても抽出して照合します",
         property_type="string",
         is_required=True,
     ).to_dict()
@@ -106,7 +106,7 @@ tool_properties_get_contracts = json.dumps([
 tool_properties_get_visit_history = json.dumps([
     McpToolProperty(
         name="customer_id",
-        description="顧客ID（例: 'C001'）",
+        description="顧客ID（例: 'C001'）。文字列内にIDが含まれていても抽出して照合します",
         property_type="string",
         is_required=True,
     ).to_dict()
@@ -115,7 +115,7 @@ tool_properties_get_visit_history = json.dumps([
 tool_properties_get_upcoming_services = json.dumps([
     McpToolProperty(
         name="days",
-        description="何日先まで検索するか（デフォルト: 30）",
+        description="何日先まで検索するか（省略時: 30）。例: 60 → 今後60日分",
         property_type="integer",
         is_required=False,
         default=30,
@@ -132,7 +132,7 @@ tool_properties_search_vehicles = json.dumps([
     ).to_dict(),
     McpToolProperty(
         name="color",
-        description="色（部分一致、例: '赤' → 'ソウルレッド' にマッチ）",
+        description="色（部分一致）。例: '赤' → 'ソウルレッド' にマッチ",
         property_type="string",
         is_required=False,
     ).to_dict(),
@@ -143,7 +143,7 @@ tool_properties_search_vehicles = json.dumps([
     arg_name="context",
     type="mcpToolTrigger",
     toolName="search_customer_by_name",
-    description="顧客名からIDを検索します（部分一致）",
+    description="顧客名からID候補を検索します（部分一致）。姓のみ/名のみ/フルネーム可",
     toolProperties=tool_properties_search_customer,
 )
 def search_customer_by_name(context) -> list[dict]:
@@ -162,7 +162,7 @@ def search_customer_by_name(context) -> list[dict]:
     arg_name="context",
     type="mcpToolTrigger",
     toolName="get_customer_info",
-    description="顧客IDから詳細情報を取得します",
+    description="顧客IDから詳細情報を取得します。入力内に含まれるIDも抽出して照合します",
     toolProperties=tool_properties_get_customer_info,
 )
 def get_customer_info(context) -> dict:
@@ -181,7 +181,7 @@ def get_customer_info(context) -> dict:
     arg_name="context",
     type="mcpToolTrigger",
     toolName="get_contracts",
-    description="顧客IDから契約履歴を取得します",
+    description="顧客IDから契約履歴を取得します。入力内に含まれるIDも抽出して照合します",
     toolProperties=tool_properties_get_contracts,
 )
 def get_contracts(context) -> list[dict]:
@@ -200,7 +200,7 @@ def get_contracts(context) -> list[dict]:
     arg_name="context",
     type="mcpToolTrigger",
     toolName="get_visit_history",
-    description="顧客IDから来店履歴を取得します",
+    description="顧客IDから来店履歴を取得します。入力内に含まれるIDも抽出して照合します",
     toolProperties=tool_properties_get_visit_history,
 )
 def get_visit_history(context) -> list[dict]:
@@ -219,7 +219,7 @@ def get_visit_history(context) -> list[dict]:
     arg_name="context",
     type="mcpToolTrigger",
     toolName="get_upcoming_services",
-    description="今後のサービス予定一覧を取得します",
+    description="今後のサービス予定一覧を取得します（指定日数先まで）",
     toolProperties=tool_properties_get_upcoming_services,
 )
 def get_upcoming_services(context) -> list[dict]:
@@ -239,7 +239,7 @@ def get_upcoming_services(context) -> list[dict]:
     arg_name="context",
     type="mcpToolTrigger",
     toolName="search_vehicles",
-    description="条件に合う車両在庫を検索します（色は部分一致対応）",
+    description="条件に合う車両在庫を検索します（色は部分一致）",
     toolProperties=tool_properties_search_vehicles,
 )
 def search_vehicles(context) -> list[dict]:

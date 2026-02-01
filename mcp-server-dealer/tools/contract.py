@@ -4,7 +4,7 @@
 顧客の契約履歴を取得
 """
 
-from tools import get_contracts as _get_contracts
+from tools import get_contracts as _get_contracts, normalize_customer_id
 def get_contracts(customer_id: str) -> list[dict]:
     """顧客IDから契約履歴を取得します
 
@@ -25,10 +25,11 @@ def get_contracts(customer_id: str) -> list[dict]:
         ]
     """
     contracts = _get_contracts()
+    normalized_id = normalize_customer_id(customer_id)
     results = []
 
     for contract in contracts:
-        if contract["customer_id"] == customer_id:
+        if contract["customer_id"] == normalized_id:
             results.append({
                 "id": contract["id"],
                 "vehicle_id": contract["vehicle_id"],

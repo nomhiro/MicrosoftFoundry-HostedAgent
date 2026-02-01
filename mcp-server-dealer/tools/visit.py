@@ -5,7 +5,7 @@
 """
 
 from datetime import datetime, timedelta
-from tools import get_visits, get_customers
+from tools import get_visits, get_customers, normalize_customer_id
 def get_visit_history(customer_id: str) -> list[dict]:
     """顧客IDから来店履歴を取得します
 
@@ -25,10 +25,11 @@ def get_visit_history(customer_id: str) -> list[dict]:
         ]
     """
     visits = get_visits()
+    normalized_id = normalize_customer_id(customer_id)
     results = []
 
     for visit in visits:
-        if visit["customer_id"] == customer_id:
+        if visit["customer_id"] == normalized_id:
             results.append({
                 "id": visit["id"],
                 "visit_date": visit["visit_date"],
