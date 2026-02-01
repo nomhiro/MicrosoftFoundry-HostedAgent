@@ -31,13 +31,13 @@ except ImportError:  # Fallback for local environments without MCP helpers
             data = {
                 "name": self.name,
                 "description": self.description,
-                "propertyType": self.property_type,
-                "isRequired": self.is_required,
+                "type": self.property_type,
+                "required": self.is_required,
             }
             if self.enum:
                 data["enum"] = self.enum
             if self.default is not None:
-                data["defaultValue"] = self.default
+                data["default"] = self.default
             return data
 
 # Azure Functions アプリケーション

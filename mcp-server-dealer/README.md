@@ -78,6 +78,23 @@ Functions:
 
 ## 動作確認
 
+> **注意**: MCPエンドポイントはSSE形式でレスポンスを返すため、Unicodeエスケープのデコードが必要です。
+
+### PowerShell ヘルパー関数
+
+以下の関数を定義してから各コマンドを実行してください：
+
+```powershell
+# MCPリクエスト用ヘルパー関数（日本語を正しく表示）
+function Invoke-McpLocal {
+    param([string]$Body)
+    $headers = @{ Accept = "application/json, text/event-stream" }
+    $response = Invoke-WebRequest -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Headers $headers -Body $Body
+    $json = ($response.Content -replace "^event:.*\r?\ndata:\s*", "")
+    $json | ConvertFrom-Json | ConvertTo-Json -Depth 10
+}
+```
+
 ### 1. ヘルスチェック
 
 ```powershell
@@ -92,7 +109,7 @@ Invoke-RestMethod -Uri "http://localhost:7071/health"
 ### 2. MCP ツール一覧の取得（JSON-RPC）
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
 ```
 
 ### 3. ツール呼び出し例（JSON-RPC）
@@ -100,51 +117,53 @@ Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST
 #### 顧客検索（名前から）
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
 ```
 
-レスポンス:
+レスポンス例:
 ```json
 {
-  "content": [{
-    "type": "text",
-    "text": "[{\"id\": \"C001\", \"name\": \"田中 太郎\", \"phone\": \"090-1234-5678\"}]"
-  }]
+  "result": {
+    "content": [{
+      "type": "text",
+      "text": "[{\"id\": \"C001\", \"name\": \"田中 太郎\", \"phone\": \"090-1234-5678\"}]"
+    }]
+  }
 }
 ```
 
 #### 顧客詳細取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"3","method":"tools/call","params":{"name":"get_customer_info","arguments":{"customer_id":"C001"}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"3","method":"tools/call","params":{"name":"get_customer_info","arguments":{"customer_id":"C001"}}}'
 ```
 
 #### 契約履歴取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"4","method":"tools/call","params":{"name":"get_contracts","arguments":{"customer_id":"C001"}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"4","method":"tools/call","params":{"name":"get_contracts","arguments":{"customer_id":"C001"}}}'
 ```
 
 #### 来店履歴取得
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"5","method":"tools/call","params":{"name":"get_visit_history","arguments":{"customer_id":"C001"}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"5","method":"tools/call","params":{"name":"get_visit_history","arguments":{"customer_id":"C001"}}}'
 ```
 
 #### サービス予定一覧
 
 ```powershell
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"6","method":"tools/call","params":{"name":"get_upcoming_services","arguments":{"days":60}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"6","method":"tools/call","params":{"name":"get_upcoming_services","arguments":{"days":60}}}'
 ```
 
 #### 車両在庫検索
 
 ```powershell
 # SUVを検索
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"7","method":"tools/call","params":{"name":"search_vehicles","arguments":{"type":"SUV"}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"7","method":"tools/call","params":{"name":"search_vehicles","arguments":{"type":"SUV"}}}'
 
 # 赤色のSUVを検索（"赤" → "ソウルレッド" にもマッチ）
-Invoke-RestMethod -Uri "http://localhost:7071/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Body '{"jsonrpc":"2.0","id":"8","method":"tools/call","params":{"name":"search_vehicles","arguments":{"type":"SUV","color":"赤"}}}'
+Invoke-McpLocal -Body '{"jsonrpc":"2.0","id":"8","method":"tools/call","params":{"name":"search_vehicles","arguments":{"type":"SUV","color":"赤"}}}'
 ```
 
 ## bash/Linux での動作確認
@@ -156,11 +175,13 @@ curl http://localhost:7071/health
 # ツール一覧
 curl -X POST http://localhost:7071/runtime/webhooks/mcp \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
 
 # 顧客検索
 curl -X POST http://localhost:7071/runtime/webhooks/mcp \
   -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
 ```
 
@@ -190,6 +211,49 @@ curl -X POST http://localhost:7071/runtime/webhooks/mcp \
 ```bash
 # Azure にデプロイ（Function Appが作成済みの場合）
 func azure functionapp publish mcp-server-dealer --python
+```
+
+## Azureデプロイ後の動作確認
+
+Azure上のMCPサーバーはSSE（Server-Sent Events）形式でレスポンスを返すため、確認方法がローカルと異なります。
+
+### curl（推奨）
+
+日本語が正しく表示されます：
+
+```bash
+# ツール一覧
+curl -X POST "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
+
+# 顧客検索
+curl -X POST "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
+```
+
+### PowerShell
+
+SSEレスポンスのUnicodeエスケープをデコードする必要があります：
+
+```powershell
+# ヘルパー関数
+function Invoke-McpRequest {
+    param([string]$Body)
+    $headers = @{ Accept = "application/json, text/event-stream" }
+    $response = Invoke-WebRequest -Uri "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Headers $headers -Body $Body
+    $json = ($response.Content -replace "^event:.*\r?\ndata:\s*", "")
+    $json | ConvertFrom-Json | ConvertTo-Json -Depth 10
+}
+
+# ツール一覧
+Invoke-McpRequest -Body '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
+
+# 顧客検索
+Invoke-McpRequest -Body '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
 ```
 
 ## ディレクトリ構成
