@@ -15,6 +15,31 @@ from tools.visit import get_visit_history as _get_visit_history
 from tools.visit import get_upcoming_services as _get_upcoming_services
 from tools.vehicle import search_vehicles as _search_vehicles
 
+try:
+    from azure.functions import McpToolProperty
+except ImportError:  # Fallback for local environments without MCP helpers
+    class McpToolProperty:
+        def __init__(self, name: str, description: str, property_type: str, is_required: bool, enum: list[str] | None = None, default: object | None = None):
+            self.name = name
+            self.description = description
+            self.property_type = property_type
+            self.is_required = is_required
+            self.enum = enum
+            self.default = default
+
+        def to_dict(self) -> dict:
+            data = {
+                "name": self.name,
+                "description": self.description,
+                "propertyType": self.property_type,
+                "isRequired": self.is_required,
+            }
+            if self.enum:
+                data["enum"] = self.enum
+            if self.default is not None:
+                data["defaultValue"] = self.default
+            return data
+
 # Azure Functions アプリケーション
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
@@ -31,70 +56,79 @@ def _get_arguments(context) -> dict:
     if "arguments" in payload:
         return payload.get("arguments", {}) or {}
 
+    if "mcptoolargs" in payload:
+        return payload.get("mcptoolargs", {}) or {}
+
     if "params" in payload and isinstance(payload["params"], dict):
-        return payload["params"].get("arguments", {}) or {}
+        params = payload["params"]
+        if "arguments" in params:
+            return params.get("arguments", {}) or {}
+        if "mcptoolargs" in params:
+            return params.get("mcptoolargs", {}) or {}
 
     return {}
 
 
 tool_properties_search_customer = json.dumps([
-    {
-        "name": "name",
-        "type": "string",
-        "description": "顧客名（例: '田中'）",
-        "required": True
-    }
+    McpToolProperty(
+        name="name",
+        description="顧客名（例: '田中'）",
+        property_type="string",
+        is_required=True,
+    ).to_dict()
 ])
 
 tool_properties_get_customer_info = json.dumps([
-    {
-        "name": "customer_id",
-        "type": "string",
-        "description": "顧客ID（例: 'C001'）",
-        "required": True
-    }
+    McpToolProperty(
+        name="customer_id",
+        description="顧客ID（例: 'C001'）",
+        property_type="string",
+        is_required=True,
+    ).to_dict()
 ])
 
 tool_properties_get_contracts = json.dumps([
-    {
-        "name": "customer_id",
-        "type": "string",
-        "description": "顧客ID（例: 'C001'）",
-        "required": True
-    }
+    McpToolProperty(
+        name="customer_id",
+        description="顧客ID（例: 'C001'）",
+        property_type="string",
+        is_required=True,
+    ).to_dict()
 ])
 
 tool_properties_get_visit_history = json.dumps([
-    {
-        "name": "customer_id",
-        "type": "string",
-        "description": "顧客ID（例: 'C001'）",
-        "required": True
-    }
+    McpToolProperty(
+        name="customer_id",
+        description="顧客ID（例: 'C001'）",
+        property_type="string",
+        is_required=True,
+    ).to_dict()
 ])
 
 tool_properties_get_upcoming_services = json.dumps([
-    {
-        "name": "days",
-        "type": "integer",
-        "description": "何日先まで検索するか（デフォルト: 30）",
-        "required": False
-    }
+    McpToolProperty(
+        name="days",
+        description="何日先まで検索するか（デフォルト: 30）",
+        property_type="integer",
+        is_required=False,
+        default=30,
+    ).to_dict()
 ])
 
 tool_properties_search_vehicles = json.dumps([
-    {
-        "name": "type",
-        "type": "string",
-        "description": "車種（'SUV', 'セダン', '軽自動車', 'ミニバン'）",
-        "required": True
-    },
-    {
-        "name": "color",
-        "type": "string",
-        "description": "色（部分一致、例: '赤' → 'ソウルレッド' にマッチ）",
-        "required": False
-    }
+    McpToolProperty(
+        name="type",
+        description="車種（'SUV', 'セダン', '軽自動車', 'ミニバン'）",
+        property_type="string",
+        is_required=True,
+        enum=["SUV", "セダン", "軽自動車", "ミニバン"],
+    ).to_dict(),
+    McpToolProperty(
+        name="color",
+        description="色（部分一致、例: '赤' → 'ソウルレッド' にマッチ）",
+        property_type="string",
+        is_required=False,
+    ).to_dict(),
 ])
 
 
