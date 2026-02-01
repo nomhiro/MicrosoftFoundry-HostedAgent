@@ -1,5 +1,6 @@
 # 販売店スタッフエージェント Dockerfile
 # Python 3.11 ベースイメージ
+# Microsoft Foundry Hosted Agent 対応
 
 FROM python:3.11-slim
 
@@ -10,16 +11,15 @@ WORKDIR /app
 RUN pip install --no-cache-dir uv
 
 # 依存関係ファイルをコピー
-COPY pyproject.toml .
+COPY pyproject.toml uv.lock* ./
 
-# 依存関係のインストール
-RUN uv sync --no-dev
+# 依存関係のインストール（プレリリース版を許可）
+RUN uv sync --no-dev --prerelease=allow
 
 # アプリケーションコードをコピー
 COPY src/ ./src/
-COPY agent.yaml .
 
-# Hosting Adapter のデフォルトポート
+# Hosted Agent のデフォルトポート
 EXPOSE 8088
 
 # エントリーポイント

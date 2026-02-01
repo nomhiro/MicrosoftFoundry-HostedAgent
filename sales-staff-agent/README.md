@@ -1,6 +1,6 @@
 # sales-staff-agent
 
-自動車販売店スタッフ支援 Hosted Agent
+自動車販売店スタッフ支援 Hosted Agent (Agent Framework版)
 
 Microsoft Foundry の Hosted Agent として動作し、MCPサーバー（mcp-server-dealer）と連携して顧客対応を支援します。
 
@@ -14,9 +14,9 @@ Microsoft Foundry の Hosted Agent として動作し、MCPサーバー（mcp-se
                ▼
 ┌─────────────────────────────────────┐
 │   sales-staff-agent                 │
-│   Hosted Agent                      │
+│   Hosted Agent (Agent Framework)    │
 │   - Hosting Adapter (Port 8088)     │
-│   - Microsoft Agent Framework       │
+│   - Observability / VS Code可視化   │
 └──────────────┬──────────────────────┘
                │ MCP Protocol
                ▼
@@ -43,13 +43,7 @@ Microsoft Foundry の Hosted Agent として動作し、MCPサーバー（mcp-se
 - Python 3.11以上
 - [uv](https://docs.astral.sh/uv/) - パッケージマネージャー
 - mcp-server-dealer が起動していること（ローカルテスト時）
-
-### インストール確認
-
-```bash
-python --version   # Python 3.11+
-uv --version       # uv がインストールされていること
-```
+- Azure CLI でログイン済み (`az login`)
 
 ## セットアップ
 
@@ -68,14 +62,18 @@ cp .env.example .env
 `.env` ファイルを編集して、必要な値を設定します：
 
 ```env
-# Azure AI Foundry プロジェクトエンドポイント
-AZURE_AI_PROJECT_ENDPOINT=https://your-resource.services.ai.azure.com/api/projects/your-project
+# Azure OpenAI設定（Project Endpointではない）
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/
 
 # モデルデプロイメント名
 AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o
 
 # MCPサーバーURL（ローカル開発時）
-MCP_SERVER_URL=http://localhost:7071/runtime/webhooks/mcp/sse
+MCP_SERVER_URL=http://localhost:7071/runtime/webhooks/mcp
+
+# Observability設定（オプション）
+FOUNDRY_OTLP_PORT=4319
+ENABLE_SENSITIVE_DATA=false
 ```
 
 ## ローカル起動
@@ -91,6 +89,8 @@ func start
 
 ### 2. エージェントを起動
 
+#### コンテナモード（HTTPサーバー）
+
 ```bash
 cd sales-staff-agent
 uv run python src/container.py
@@ -99,25 +99,49 @@ uv run python src/container.py
 起動すると以下のようなメッセージが表示されます：
 
 ```
-INFO:     Started server process
-INFO:     Uvicorn running on http://0.0.0.0:8088 (Press CTRL+C to quit)
+Starting Sales Staff Agent (Agent Framework)...
+Azure OpenAI Endpoint: https://your-resource.openai.azure.com/
+Model: gpt-4o
+MCP Server: http://localhost:7071/runtime/webhooks/mcp
+
+Endpoints:
+  POST http://localhost:8088/responses - Send messages
+
+Press Ctrl+C to stop
 ```
+
+#### 対話モード（開発・テスト用）
+
+ターミナルから直接エージェントと対話できます：
+
+```bash
+cd sales-staff-agent
+uv run python src/interactive.py
+```
+
+```
+==================================================
+Sales Staff Agent - 対話モード
+==================================================
+MCP Server: http://localhost:7071/runtime/webhooks/mcp
+
+終了するには 'quit' と入力してください
+
+You: 田中様の契約履歴を教えて
+Agent: ...
+```
+
+## VS Code 可視化
+
+VS Code の Microsoft Foundry 拡張機能を使用してワークフローを可視化できます。
+
+1. エージェントを起動（container.py または interactive.py）
+2. VS Code: `Ctrl+Shift+P` → `Microsoft Foundry: Open Visualizer for Hosted Agents`
+3. リクエストを送信すると、可視化タブにエージェントのワークフローが表示されます
 
 ## 動作確認
 
-### 1. ヘルスチェック（起動確認）
-
-```powershell
-Invoke-RestMethod -Uri "http://localhost:8088/health"
-```
-
-または
-
-```bash
-curl http://localhost:8088/health
-```
-
-### 2. エージェントへの問い合わせ
+### HTTPリクエストでテスト
 
 #### PowerShell
 
@@ -133,8 +157,7 @@ $body = @{
     }
 } | ConvertTo-Json -Depth 4
 
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
-  Select-Object -ExpandProperty output
+Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body
 ```
 
 #### bash/curl
@@ -151,54 +174,7 @@ curl -X POST http://localhost:8088/responses \
   }'
 ```
 
-### 3. 動作確認シナリオ（顧客ID特定 → 詳細取得）
-
-顧客名だけでは一意に特定できない場合があるため、以下の2ステップで確認します。
-
-1) 顧客候補とIDの取得
-
-```powershell
-$body = @{
-  input = @{
-    messages = @(
-      @{ role = "user"; content = "田中 太郎の顧客情報を教えて" }
-    )
-  }
-} | ConvertTo-Json -Depth 4
-
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
-  Select-Object -ExpandProperty output
-```
-
-2) 取得したIDで契約履歴と顧客情報を取得
-
-```powershell
-$body = @{
-  input = @{
-    messages = @(
-      @{ role = "user"; content = "C001の契約履歴を教えて" }
-    )
-  }
-} | ConvertTo-Json -Depth 4
-
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
-  Select-Object -ExpandProperty output
-```
-
-```powershell
-$body = @{
-  input = @{
-    messages = @(
-      @{ role = "user"; content = "C001の顧客情報を教えて" }
-    )
-  }
-} | ConvertTo-Json -Depth 4
-
-Invoke-RestMethod -Uri "http://localhost:8088/responses" -Method POST -ContentType "application/json" -Body $body |
-  Select-Object -ExpandProperty output
-```
-
-以下の問い合わせが正常に応答されることを確認してください：
+### 動作確認シナリオ
 
 | シナリオ | 問い合わせ例 | 期待される動作 |
 |---------|-------------|---------------|
@@ -222,15 +198,24 @@ docker build -t sales-staff-agent:v1 .
 
 ```bash
 docker run -p 8088:8088 \
-  -e AZURE_AI_PROJECT_ENDPOINT=https://your-resource.services.ai.azure.com/api/projects/your-project \
+  -e AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com/ \
   -e AZURE_AI_MODEL_DEPLOYMENT_NAME=gpt-4o \
-  -e MCP_SERVER_URL=http://host.docker.internal:7071/runtime/webhooks/mcp/sse \
+  -e MCP_SERVER_URL=http://host.docker.internal:7071/runtime/webhooks/mcp \
   sales-staff-agent:v1
 ```
 
 > **Note**: Docker 内から localhost の MCPサーバーにアクセスする場合は `host.docker.internal` を使用します。
 
-### Azure Container Registry へのプッシュ
+## Foundry へのデプロイ
+
+### 方法1: VS Code拡張機能（推奨）
+
+1. VS Code: `Ctrl+Shift+P` → `Microsoft Foundry: Deploy Hosted Agent`
+2. ターゲットワークスペースを選択
+3. コンテナエージェントファイルとして `container.py` を指定
+4. デプロイ完了後、Foundry拡張機能ツリービューの「Hosted Agents (Preview)」セクションに表示
+
+### 方法2: Docker + ACR + Python SDK
 
 ```bash
 # ACRにログイン
@@ -243,38 +228,17 @@ docker tag sales-staff-agent:v1 <your-registry>.azurecr.io/sales-staff-agent:v1
 docker push <your-registry>.azurecr.io/sales-staff-agent:v1
 ```
 
-## ディレクトリ構成
-
-```
-sales-staff-agent/
-├── pyproject.toml       # Python依存関係
-├── uv.lock              # 依存関係ロック
-├── agent.yaml           # エージェント定義（Azure Developer CLI用）
-├── Dockerfile           # コンテナ化設定
-├── .env.example         # 環境変数テンプレート
-└── src/
-    ├── __init__.py      # パッケージ初期化
-    ├── agent.py         # エージェント定義（MCPツール接続）
-    └── container.py     # コンテナエントリーポイント
-```
-
-## Foundry へのデプロイ
-
-### Azure Developer CLI を使用
-
-```bash
-# エージェントの初期化
-azd ai agent init -m ./agent.yaml
-
-# デプロイ
-azd up
-```
-
-### Python SDK を使用
+Python SDKでデプロイ:
 
 ```python
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import ImageBasedHostedAgentDefinition, MCPTool
+from azure.ai.projects.models import ImageBasedHostedAgentDefinition
+from azure.identity import DefaultAzureCredential
+
+client = AIProjectClient(
+    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    credential=DefaultAzureCredential()
+)
 
 agent = client.agents.create_version(
     agent_name="sales-staff-agent",
@@ -282,14 +246,29 @@ agent = client.agents.create_version(
         cpu="1",
         memory="2Gi",
         image="<your-registry>.azurecr.io/sales-staff-agent:v1",
-        tools=[
-            MCPTool(
-                server_label="dealer-backend",
-                project_connection_id="mcp-dealer-connection"
-            )
-        ]
+        environment_variables={
+            "AZURE_OPENAI_ENDPOINT": os.environ["AZURE_OPENAI_ENDPOINT"],
+            "AZURE_AI_MODEL_DEPLOYMENT_NAME": "gpt-4o",
+            "MCP_SERVER_URL": "<deployed-mcp-server-url>"
+        }
     )
 )
+```
+
+## ディレクトリ構成
+
+```
+sales-staff-agent/
+├── pyproject.toml       # Python依存関係
+├── uv.lock              # 依存関係ロック
+├── agent.yaml           # エージェント定義（参照用）
+├── Dockerfile           # コンテナ化設定
+├── .env.example         # 環境変数テンプレート
+└── src/
+    ├── __init__.py      # パッケージ初期化
+    ├── agent.py         # エージェント定義（Agent Framework）
+    ├── container.py     # コンテナモード（HTTPサーバー）
+    └── interactive.py   # 対話モード（開発用）
 ```
 
 ## トラブルシューティング
@@ -306,6 +285,11 @@ agent = client.agents.create_version(
    uv sync
    ```
 
+3. プレリリース版パッケージの場合:
+   ```bash
+   uv sync --prerelease=allow
+   ```
+
 ### MCPサーバーに接続できない
 
 1. MCPサーバーが起動しているか確認:
@@ -315,14 +299,6 @@ agent = client.agents.create_version(
 
 2. `.env` の `MCP_SERVER_URL` が正しいか確認
 
-### ポート 8088 が使用中
-
-環境変数でポートを変更できます：
-
-```bash
-PORT=8089 uv run python src/container.py
-```
-
 ### Azure 認証エラー
 
 ローカル開発時は Azure CLI でログインしておく必要があります：
@@ -331,8 +307,17 @@ PORT=8089 uv run python src/container.py
 az login
 ```
 
+### インポートエラー
+
+パッケージがプレリリース版の場合があります。以下を試してください：
+
+```bash
+pip install --pre agent-framework-core agent-framework-azure-ai azure-ai-agentserver-agentframework
+```
+
 ## 関連ドキュメント
 
 - [mcp-server-dealer README](../mcp-server-dealer/README.md) - MCPサーバーの詳細
 - [Microsoft Foundry Hosted Agent ドキュメント](https://learn.microsoft.com/azure/ai-foundry/agents/concepts/hosted-agents)
 - [Microsoft Agent Framework](https://learn.microsoft.com/agent-framework/)
+- [VS Code Hosted Agent ワークフロー](https://learn.microsoft.com/azure/ai-foundry/agents/how-to/vs-code-agents-workflow-pro-code)

@@ -1,12 +1,12 @@
 """
-販売店スタッフエージェント定義
+販売店スタッフエージェント定義 - Agent Framework版
 
 MCPツールと連携して顧客情報・契約履歴・来店履歴・車両在庫を検索
 """
 
 import os
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import MCPTool
+from agent_framework import ChatAgent, MCPStreamableHTTPTool
+from agent_framework.azure import AzureOpenAIResponsesClient
 from azure.identity import DefaultAzureCredential
 from dotenv import load_dotenv
 
@@ -14,10 +14,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # 環境変数から設定を取得
-PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
+AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT", "")
 MODEL_DEPLOYMENT_NAME = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
 MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp")
-PROJECT_CONNECTION_ID = os.getenv("PROJECT_CONNECTION_ID", "mcp-dealer-connection").strip()
 
 # システムプロンプト
 SYSTEM_INSTRUCTIONS = """
@@ -47,48 +46,32 @@ SYSTEM_INSTRUCTIONS = """
 - 候補が 0 件なら「該当なし」と回答し、憶測で情報を作らない。
 - ユーザー入力に `C001` のようなIDが含まれている場合は、そのIDを使って該当ツールを呼ぶ。
 - ツールから `error` が返っている場合は、その内容をそのまま伝え、再確認を依頼する。
+- ツールを呼び出さずに推測で回答しない。必ずツール結果に基づいて回答する。
 
 常に丁寧な日本語で回答してください。
 """
 
 
-def create_mcp_tool() -> MCPTool:
-    """MCPツールの設定を作成"""
-    return MCPTool(
-        server_label="dealer-backend",
-        server_url=MCP_SERVER_URL,
-        project_connection_id=PROJECT_CONNECTION_ID or None,
-        allowed_tools=[
-            "search_customer_by_name",
-            "get_customer_info",
-            "get_contracts",
-            "get_visit_history",
-            "search_vehicles",
-            "get_upcoming_services"
-        ]
-    )
-
-
-def create_agent_client() -> AIProjectClient:
-    """AIProjectClient を作成"""
-    credential = DefaultAzureCredential()
-    return AIProjectClient(
-        endpoint=PROJECT_ENDPOINT,
-        credential=credential
-    )
-
-
-async def create_agent():
+def create_agent() -> ChatAgent:
     """エージェントを作成"""
-    client = create_agent_client()
-    mcp_tool = create_mcp_tool()
+    credential = DefaultAzureCredential()
 
-    # エージェントの作成
-    agent = await client.agents.create_agent(
-        model=MODEL_DEPLOYMENT_NAME,
+    # Azure OpenAI Responses Clientでエージェント作成
+    agent = AzureOpenAIResponsesClient(
+        endpoint=AZURE_OPENAI_ENDPOINT,
+        deployment_name=MODEL_DEPLOYMENT_NAME,
+        credential=credential,
+    ).create_agent(
         name="SalesStaffAgent",
         instructions=SYSTEM_INSTRUCTIONS,
-        tools=[mcp_tool]
     )
 
     return agent
+
+
+def create_mcp_tool() -> MCPStreamableHTTPTool:
+    """MCPツールを作成"""
+    return MCPStreamableHTTPTool(
+        name="dealer-backend",
+        url=MCP_SERVER_URL,
+    )

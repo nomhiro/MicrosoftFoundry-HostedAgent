@@ -1,11 +1,12 @@
 [project]
 name = "sales-staff-agent"
-version = "0.1.0"
-description = "販売店スタッフ支援 Hosted Agent"
+version = "0.2.0"
+description = "販売店スタッフ支援 Hosted Agent (Agent Framework版)"
 requires-python = ">=3.11"
 dependencies = [
-    "aiohttp>=3.13.3",
-    "azure-ai-projects>=1.0.0b1",
+    "agent-framework-core",
+    "agent-framework-azure-ai",
+    "azure-ai-agentserver-agentframework",
     "azure-identity>=1.15.0",
     "python-dotenv>=1.0.0",
 ]
