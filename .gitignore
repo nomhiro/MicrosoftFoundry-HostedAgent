@@ -7,3 +7,6 @@ __queuestorage__/
 
 # Windows reserved names
 nul
+
+# Azurite
+AzuriteConfig

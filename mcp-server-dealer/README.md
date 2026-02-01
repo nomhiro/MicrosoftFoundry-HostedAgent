@@ -225,19 +225,29 @@ func azure functionapp publish mcp-server-dealer --python
 
 Azure上のMCPサーバーはSSE（Server-Sent Events）形式でレスポンスを返すため、確認方法がローカルと異なります。
 
+### 事前準備（MCP Key の指定）
+
+Azure Functions の MCP エンドポイントは通常 Function Key が必要です。指定しない場合は `405 (Method Not Allowed)` になります。
+以下のいずれかで指定してください。
+
+- クエリ: `?code=<YOUR_MCP_KEY>`
+- ヘッダー: `x-functions-key: <YOUR_MCP_KEY>`
+
+> 例の `https://mcp-server-dealer.azurewebsites.net` はデプロイ先の Function App 名に置き換えてください。
+
 ### curl（推奨）
 
 日本語が正しく表示されます：
 
 ```bash
 # ツール一覧
-curl -X POST "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" \
+curl -X POST "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp?code=<YOUR_MCP_KEY>" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
 
 # 顧客検索
-curl -X POST "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" \
+curl -X POST "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp?code=<YOUR_MCP_KEY>" \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
@@ -251,8 +261,11 @@ SSEレスポンスのUnicodeエスケープをデコードする必要があり�
 # ヘルパー関数
 function Invoke-McpRequest {
     param([string]$Body)
-    $headers = @{ Accept = "application/json, text/event-stream" }
-    $response = Invoke-WebRequest -Uri "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Headers $headers -Body $Body
+  $headers = @{
+    Accept = "application/json, text/event-stream"
+    "x-functions-key" = "<YOUR_MCP_KEY>"
+  }
+  $response = Invoke-WebRequest -Uri "https://mcp-server-dealer.azurewebsites.net/runtime/webhooks/mcp" -Method POST -ContentType "application/json" -Headers $headers -Body $Body
     $json = ($response.Content -replace "^event:.*\r?\ndata:\s*", "")
     $json | ConvertFrom-Json | ConvertTo-Json -Depth 10
 }
@@ -263,6 +276,29 @@ Invoke-McpRequest -Body '{"jsonrpc":"2.0","id":"1","method":"tools/list"}'
 # 顧客検索
 Invoke-McpRequest -Body '{"jsonrpc":"2.0","id":"2","method":"tools/call","params":{"name":"search_customer_by_name","arguments":{"name":"田中"}}}'
 ```
+
+### Postman
+
+SSE形式のため、返却の `data:` 行に含まれるJSONを取り出して確認します。
+
+- Method: `POST`
+- URL: `https://<YOUR_FUNCTION_APP>.azurewebsites.net/runtime/webhooks/mcp`
+- Headers:
+  - `Content-Type: application/json`
+  - `Accept: application/json, text/event-stream`
+  - `x-functions-key: <YOUR_MCP_KEY>`
+- Body (raw / JSON):
+  ```json
+  {
+    "jsonrpc": "2.0",
+    "id": "2",
+    "method": "tools/call",
+    "params": {
+      "name": "search_customer_by_name",
+      "arguments": {"name": "田中"}
+    }
+  }
+  ```
 
 ## ディレクトリ構成
 
