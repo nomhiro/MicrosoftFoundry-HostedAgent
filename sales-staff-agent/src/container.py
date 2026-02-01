@@ -80,6 +80,7 @@ async def create_app():
 - 候補が 0 件なら「該当なし」と回答し、憶測で情報を作らない。
 - ユーザー入力に C001 のようなIDが含まれている場合は、そのIDを使って該当ツールを呼ぶ。
 - ツールから error が返っている場合は、その内容をそのまま伝え、再確認を依頼する。
+- ツールを呼び出さずに推測で回答しない。必ずツール結果に基づいて回答する。
 
 常に丁寧な日本語で回答してください。
 """
@@ -112,6 +113,19 @@ async def create_app():
             except Exception:
                 return args_data
         return json.dumps(args_data, ensure_ascii=False) if args_data else "{}"
+
+    def _safe_dump(item) -> str:
+        """オブジェクトを安全に文字列化してログ出力"""
+        try:
+            if hasattr(item, "as_dict"):
+                return json.dumps(item.as_dict(), ensure_ascii=False, default=str)
+            if hasattr(item, "to_dict"):
+                return json.dumps(item.to_dict(), ensure_ascii=False, default=str)
+            if isinstance(item, (dict, list, tuple)):
+                return json.dumps(item, ensure_ascii=False, default=str)
+            return json.dumps(getattr(item, "__dict__", str(item)), ensure_ascii=False, default=str)
+        except Exception:
+            return "(log failed)"
 
     async def responses_handler(request):
         """メッセージ処理エンドポイント"""
@@ -175,12 +189,29 @@ async def create_app():
                         output = getattr(item, 'output', None)
                         logger.info(f"  結果: {_log_args(output)}")
 
+                    # 新しいMCPイベント（SDK差異）
+                    elif item_type == "mcp_list_tools":
+                        logger.info("-" * 50)
+                        logger.info("ツール一覧取得: mcp_list_tools")
+                        logger.info(f"  内容: {_safe_dump(item)}")
+                    elif item_type == "mcp_call":
+                        logger.info("-" * 50)
+                        logger.info("ツール呼び出し: mcp_call")
+                        logger.info(f"  内容: {_safe_dump(item)}")
+                    elif item_type == "mcp_call_output":
+                        logger.info("-" * 50)
+                        logger.info("ツール呼び出し結果: mcp_call_output")
+                        logger.info(f"  内容: {_safe_dump(item)}")
+
                     # メッセージ（LLM応答）のログ
                     elif item_type == "message":
                         content_list = getattr(item, 'content', [])
                         for content in content_list:
                             if getattr(content, 'type', None) == "output_text":
                                 output_text = getattr(content, 'text', '')
+                    else:
+                        logger.info(f"出力アイテム: type={item_type}")
+                        logger.info(f"  内容: {_safe_dump(getattr(item, 'content', None) or item)}")
 
                 elif event_type == "response.completed":
                     final_response = event.response

@@ -76,43 +76,43 @@ def _get_arguments(context) -> dict:
     return {}
 
 
-tool_properties_search_customer = json.dumps([
+tool_properties_search_customer = [
     McpToolProperty(
         name="name",
         description="顧客名（部分一致）。姓のみ/名のみ/フルネーム可（例: '田中', '田中 太郎'）",
         property_type="string",
         is_required=True,
     ).to_dict()
-], ensure_ascii=False)
+]
 
-tool_properties_get_customer_info = json.dumps([
+tool_properties_get_customer_info = [
     McpToolProperty(
         name="customer_id",
         description="顧客ID（例: 'C001'）。文字列内にIDが含まれていても抽出して照合します（例: 'C001の顧客情報'）",
         property_type="string",
         is_required=True,
     ).to_dict()
-], ensure_ascii=False)
+]
 
-tool_properties_get_contracts = json.dumps([
+tool_properties_get_contracts = [
     McpToolProperty(
         name="customer_id",
         description="顧客ID（例: 'C001'）。文字列内にIDが含まれていても抽出して照合します",
         property_type="string",
         is_required=True,
     ).to_dict()
-], ensure_ascii=False)
+]
 
-tool_properties_get_visit_history = json.dumps([
+tool_properties_get_visit_history = [
     McpToolProperty(
         name="customer_id",
         description="顧客ID（例: 'C001'）。文字列内にIDが含まれていても抽出して照合します",
         property_type="string",
         is_required=True,
     ).to_dict()
-], ensure_ascii=False)
+]
 
-tool_properties_get_upcoming_services = json.dumps([
+tool_properties_get_upcoming_services = [
     McpToolProperty(
         name="days",
         description="何日先まで検索するか（省略時: 30）。例: 60 → 今後60日分",
@@ -120,9 +120,9 @@ tool_properties_get_upcoming_services = json.dumps([
         is_required=False,
         default=30,
     ).to_dict()
-], ensure_ascii=False)
+]
 
-tool_properties_search_vehicles = json.dumps([
+tool_properties_search_vehicles = [
     McpToolProperty(
         name="type",
         description="車種（'SUV', 'セダン', '軽自動車', 'ミニバン'）",
@@ -136,7 +136,7 @@ tool_properties_search_vehicles = json.dumps([
         property_type="string",
         is_required=False,
     ).to_dict(),
-], ensure_ascii=False)
+]
 
 
 @app.generic_trigger(
@@ -150,7 +150,8 @@ def search_customer_by_name(context) -> list[dict]:
     try:
         args = _get_arguments(context)
         _log_json("search_customer_by_name args:", args)
-        result = _search_customer_by_name(args.get("name", ""))
+        name = args.get("name") or args.get("query") or ""
+        result = _search_customer_by_name(name)
         _log_json("search_customer_by_name result:", result)
         return result
     except Exception:

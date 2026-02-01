@@ -16,6 +16,8 @@ def search_customer_by_name(name: str) -> list[dict]:
         マッチした顧客のリスト [{id, name, phone}, ...]
         該当なしの場合は空リスト
     """
+    if not name or not str(name).strip():
+        return []
     customers = get_customers()
     results = []
 
