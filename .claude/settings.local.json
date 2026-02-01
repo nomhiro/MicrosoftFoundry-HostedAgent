@@ -58,7 +58,8 @@
       "mcp__context7__query-docs",
       "WebFetch(domain:zenn.dev)",
       "WebFetch(domain:github.com)",
-      "mcp__deepwiki__deepwiki_fetch"
+      "mcp__deepwiki__deepwiki_fetch",
+      "Bash(uv run python:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

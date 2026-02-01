@@ -12,9 +12,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # デバッグ用に詳細ログを有効化
-from agent_framework.observability import setup_observability
+from agent_framework.observability import enable_instrumentation
 
-setup_observability(enable_sensitive_data=True)
+enable_instrumentation(enable_sensitive_data=True)
 
 from agent import create_agent, create_mcp_tool
 

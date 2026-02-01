@@ -45,9 +45,13 @@ app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 
 def _log_json(message: str, payload: dict) -> None:
+    """ログ出力（開発時はコンソールに表示）"""
     try:
-        logging.info("%s %s", message, json.dumps(payload, ensure_ascii=False, default=str))
+        output = json.dumps(payload, ensure_ascii=False, default=str, indent=2)
+        print(f"[MCP] {message}\n{output}")
+        logging.info("%s %s", message, output)
     except Exception:
+        print(f"[MCP] {message} {payload}")
         logging.info("%s %s", message, payload)
 
 

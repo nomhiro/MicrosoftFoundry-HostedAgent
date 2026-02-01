@@ -61,7 +61,7 @@ def create_agent() -> ChatAgent:
         endpoint=AZURE_OPENAI_ENDPOINT,
         deployment_name=MODEL_DEPLOYMENT_NAME,
         credential=credential,
-    ).create_agent(
+    ).as_agent(
         name="SalesStaffAgent",
         instructions=SYSTEM_INSTRUCTIONS,
     )
@@ -74,4 +74,7 @@ def create_mcp_tool() -> MCPStreamableHTTPTool:
     return MCPStreamableHTTPTool(
         name="dealer-backend",
         url=MCP_SERVER_URL,
+        # Azure Functions MCPサーバーはツールのみサポート
+        load_prompts=False,
+        load_resources=False,
     )
