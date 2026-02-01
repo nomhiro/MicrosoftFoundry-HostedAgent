@@ -36,7 +36,8 @@ async def create_app():
     # 環境変数から設定を取得
     project_endpoint = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
     model_deployment = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
-    mcp_server_url = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp/sse")
+    mcp_server_url = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp")
+    project_connection_id = os.getenv("PROJECT_CONNECTION_ID", "mcp-dealer-connection").strip()
 
     print("Initializing Sales Staff Agent...")
     print(f"Project Endpoint: {project_endpoint}")
@@ -53,19 +54,34 @@ async def create_app():
     )
 
     # MCPツールの設定
-    mcp_tool = MCPTool(
-        server_label="dealer-backend",
-        server_url=mcp_server_url,
-        require_approval="never",
-        allowed_tools=[
-            "search_customer_by_name",
-            "get_customer_info",
-            "get_contracts",
-            "get_visit_history",
-            "search_vehicles",
-            "get_upcoming_services"
-        ]
-    )
+    if project_connection_id:
+        mcp_tool = MCPTool(
+            server_label="dealer-backend",
+            project_connection_id=project_connection_id,
+            require_approval="never",
+            allowed_tools=[
+                "search_customer_by_name",
+                "get_customer_info",
+                "get_contracts",
+                "get_visit_history",
+                "search_vehicles",
+                "get_upcoming_services"
+            ]
+        )
+    else:
+        mcp_tool = MCPTool(
+            server_label="dealer-backend",
+            server_url=mcp_server_url,
+            require_approval="never",
+            allowed_tools=[
+                "search_customer_by_name",
+                "get_customer_info",
+                "get_contracts",
+                "get_visit_history",
+                "search_vehicles",
+                "get_upcoming_services"
+            ]
+        )
 
     # システムプロンプト
     instructions = """

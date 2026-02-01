@@ -16,7 +16,8 @@ load_dotenv()
 # 環境変数から設定を取得
 PROJECT_ENDPOINT = os.getenv("AZURE_AI_PROJECT_ENDPOINT", "")
 MODEL_DEPLOYMENT_NAME = os.getenv("AZURE_AI_MODEL_DEPLOYMENT_NAME", "gpt-4o")
-MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp/sse")
+MCP_SERVER_URL = os.getenv("MCP_SERVER_URL", "http://localhost:7071/runtime/webhooks/mcp")
+PROJECT_CONNECTION_ID = os.getenv("PROJECT_CONNECTION_ID", "mcp-dealer-connection").strip()
 
 # システムプロンプト
 SYSTEM_INSTRUCTIONS = """
@@ -53,6 +54,20 @@ SYSTEM_INSTRUCTIONS = """
 
 def create_mcp_tool() -> MCPTool:
     """MCPツールの設定を作成"""
+    if PROJECT_CONNECTION_ID:
+        return MCPTool(
+            server_label="dealer-backend",
+            project_connection_id=PROJECT_CONNECTION_ID,
+            allowed_tools=[
+                "search_customer_by_name",
+                "get_customer_info",
+                "get_contracts",
+                "get_visit_history",
+                "search_vehicles",
+                "get_upcoming_services"
+            ]
+        )
+
     return MCPTool(
         server_label="dealer-backend",
         server_url=MCP_SERVER_URL,
