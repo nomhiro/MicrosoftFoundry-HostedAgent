@@ -3,6 +3,12 @@
   "logging": {
     "logLevel": {
       "Default": "Information",
+      "Function": "Information",
+      "Host.Results": "Warning",
+      "Host.Aggregator": "Warning",
+      "Host.Triggers": "Warning",
+      "Microsoft": "Warning",
+      "System": "Warning",
       "Microsoft.Azure.Functions.Worker.Extensions.Mcp": "Warning",
       "Mcp": "Warning"
     },
