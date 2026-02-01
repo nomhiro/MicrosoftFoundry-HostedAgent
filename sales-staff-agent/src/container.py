@@ -53,35 +53,21 @@ async def create_app():
         credential=credential
     )
 
-    # MCPツールの設定
-    if project_connection_id:
-        mcp_tool = MCPTool(
-            server_label="dealer-backend",
-            project_connection_id=project_connection_id,
-            require_approval="never",
-            allowed_tools=[
-                "search_customer_by_name",
-                "get_customer_info",
-                "get_contracts",
-                "get_visit_history",
-                "search_vehicles",
-                "get_upcoming_services"
-            ]
-        )
-    else:
-        mcp_tool = MCPTool(
-            server_label="dealer-backend",
-            server_url=mcp_server_url,
-            require_approval="never",
-            allowed_tools=[
-                "search_customer_by_name",
-                "get_customer_info",
-                "get_contracts",
-                "get_visit_history",
-                "search_vehicles",
-                "get_upcoming_services"
-            ]
-        )
+    # MCPツールの設定（server_url は必須）
+    mcp_tool = MCPTool(
+        server_label="dealer-backend",
+        server_url=mcp_server_url,
+        project_connection_id=project_connection_id or None,
+        require_approval="never",
+        allowed_tools=[
+            "search_customer_by_name",
+            "get_customer_info",
+            "get_contracts",
+            "get_visit_history",
+            "search_vehicles",
+            "get_upcoming_services"
+        ]
+    )
 
     # システムプロンプト
     instructions = """

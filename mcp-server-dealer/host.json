@@ -39,9 +39,6 @@
       "encryptClientState": true,
       "messageOptions": {
         "useAbsoluteUriForEndpoint": false
-      },
-      "system": {
-        "webhookAuthorizationLevel": "Anonymous"
       }
     },
     "http": {

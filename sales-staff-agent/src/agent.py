@@ -54,23 +54,10 @@ SYSTEM_INSTRUCTIONS = """
 
 def create_mcp_tool() -> MCPTool:
     """MCPツールの設定を作成"""
-    if PROJECT_CONNECTION_ID:
-        return MCPTool(
-            server_label="dealer-backend",
-            project_connection_id=PROJECT_CONNECTION_ID,
-            allowed_tools=[
-                "search_customer_by_name",
-                "get_customer_info",
-                "get_contracts",
-                "get_visit_history",
-                "search_vehicles",
-                "get_upcoming_services"
-            ]
-        )
-
     return MCPTool(
         server_label="dealer-backend",
         server_url=MCP_SERVER_URL,
+        project_connection_id=PROJECT_CONNECTION_ID or None,
         allowed_tools=[
             "search_customer_by_name",
             "get_customer_info",

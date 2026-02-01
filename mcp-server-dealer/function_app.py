@@ -41,7 +41,7 @@ except ImportError:  # Fallback for local environments without MCP helpers
             return data
 
 # Azure Functions アプリケーション
-app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
+app = func.FunctionApp(http_auth_level=func.AuthLevel.FUNCTION)
 
 
 def _log_json(message: str, payload: dict) -> None:
